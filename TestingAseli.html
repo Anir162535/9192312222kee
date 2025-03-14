@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinicraft</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #3498db;
+            color: white;
+        }
+        font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #3498db;
+            color: white;
+            overflow-x: hidden;
+      }
+
+    .valid { color: green; }
+    .invalid { color: red; }
+    .new-element { color: blue; }
+    function updateChatbox(message, type = "") {
+        const chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML = `<span class="${type}">${message}</span>`;
+    }
+
+        /* Kombinasi Text Colors */
+        .combination-success {}
+            color: #27ae60 !important;
+            animation: text-glow-green 1s;
+        }
+        
+        #saldo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Pastikan elemen rata kiri */
+}
+
+#koin {
+    margin-top: 2.5px; /* Kurangi jarak bawah koin 
+    margin-left: 0px;*/
+}
+
+#kunci {
+    margin-top: 2.5px; /* Tambah jarak atas kunci */
+}
+        
+        #koin {
+    margin-left: 140px; /* Geser ke kanan */
+}
+
+#kunci {
+    margin-left: 30px; /* Geser lebih ke kanan */
+}
+       #koin {
+    position: relative;
+    top: 0px; /* Geser ke atas */
+}
+
+#kunci {
+    position: relative;
+    top: 150px; /* Geser ke bawah */
+}
+
+        .combination-error {
+            color: #e74c3c !important;
+            animation: text-shake 0.5s;
+        }
+
+        .combination-discovery {
+            color: #2980b9 !important;
+            animation: text-glow-blue 1s;
+        }
+
+        /* Animations */
+        @keyframes text-glow-green {
+            0% { text-shadow: 0 0 10px #27ae60; }
+            50% { text-shadow: 0 0 25px #27ae60; }
+            100% { text-shadow: none; }
+        }
+
+        @keyframes text-glow-blue {
+            0% { text-shadow: 0 0 10px #2980b9; }
+            50% { text-shadow: 0 0 25px #2980b9; }
+            100% { text-shadow: none; }
+        }
+
+        @keyframes text-shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(8px); }
+            50% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Sidebar Toggle */
+        #toggle-sidebar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 200px;
+            background-color: #2c3e50;
+            padding: 10px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: -220px;
+            transition: left 0.3s ease;
+        }
+        #sidebar.active {
+            left: 0;
+        }
+        #sidebar button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            color: white;
+            background-color: #34495e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+        }
+        #sidebar button.active {
+            background-color: #3498db;
+        }
+
+        /* Main Content */
+        #content {
+            padding: 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        #content.sidebar-active {
+            margin-left: 220px;
+        }
+
+        /* Items Grid */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .item {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: white;
+            color: black;
+            flex-direction: column;
+            font-weight: bold;
+        }
+        .selected {
+            border: 3px solid red;
+        }
+
+        /* Progress Bar */
+        #progress {
+            width: 80%;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            margin: 10px auto;
+            position: relative;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: green;
+            border-radius: 10px;
+        }
+        #progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #fraction {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Currency Display */
+        #koin {
+            position: fixed;
+            top: 10px;
+            left: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        #kunci {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+       .chatbox {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: white; /* Chatbox dengan latar belakang putih */
+    padding: 10px;
+    border-top: 2px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: scroll; /* Menambahkan scroll jika konten lebih banyak */
+    height: 5vh; /* 70% dari tinggi layar */
+}
+
+        /* Validation Messages */
+        .valid { color: green; }
+        .invalid { color: red; }
+        
+        #achievement-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.achievement {
+    color: black;
+    width: calc(90% - 10px); /* Bagi jadi 2 kolom */
+    background-color: white; /* Warna default */
+    padding: 10px;
+    align-items: center;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.achievement.completed {
+    background-color: lightgreen; /* Warna jika berhasil */
+}
+
+.achievement .icon {
+    font-size: 24px;
+}
+        /* Confirmation Dialog */
+        #confirmation {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            bottom: 5000%;
+            left: 50%;
+            transform: translate(-50%, -125%);
+            background: #2980b9;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+            font-weight: bold;
+        }
+        #confirmation button {
+            margin: 15px 10px 0;
+            padding: 0;
+            font-size: 24px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            gap: 15px;
+            flex-direction: row;
+        }
+        #confirm-btn {
+    background: #27ae60;
+    position: relative;
+    left: -50px;
+    bottom: 1px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+#confirm-btn:hover {
+    background: #1e8449;
+    opacity: 0.9;
+}
+/* Tombol silang */
+#confirmation button:last-child {
+    background: #c0392b !important;
+    position: relative;
+    left: 175px;
+    bottom: 60px;
+    color: black !important;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+#confirmation button:last-child:hover {
+    background: #a93226 !important;
+    box-shadow: 0 0 15px #a93226;    
+}
+
+        /* Audio Element */
+        audio {
+            display: none;
+        }
+        
+        /* ================ CHEST TIERS ================ */
+.item[data-tier="bronze"] { background: #cd7f32; }
+.item[data-tier="silver"] { background: #c0c0c0; }
+.item[data-tier="gold"] { background: #ffd700; }
+.item[data-tier="legendary"] { 
+    background: linear-gradient(45deg, #ff0000, #ffd700);
+}
+
+/* Efek hover peti */
+.item[data-type="chest"]:hover {
+    transform: rotate(5deg) scale(1.1);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Style untuk item special */
+.item[data-type="special"] {
+    border: 2px dashed #3498db;
+    background: rgba(52, 152, 219, 0.1);
+}
+
+/* ================ SALDO POSITION ================ */
+.saldo-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+ /* Pusatkan semua kotak di dalam semua tab */
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Jika ada elemen yang berisi daftar (misalnya koleksi elemen), pusatkan juga */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Beri jarak antar elemen */
+}
+
+/* Pusatkan elemen dalam daftar */
+.element-item, .achievement-item, .shop-item, .collection-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Pastikan judul di tab tidak memiliki animasi atau efek transisi */
+#elemen h1, #element-list h1 {
+    position: static;
+    animation: none;
+    transition: none;
+}
+
+/* Matikan semua animasi dan transisi pada judul */
+#elemen h1, #element-list h1 {
+    position: relative; /* Pastikan tidak berubah posisinya */
+    animation: none !important; /* Hapus semua animasi */
+    transition: none !important; /* Hapus efek transisi */
+}
+
+/* Pastikan judul tidak memiliki animasi dan tetap di tempat */
+#elemen h1, #element-list h1 {
+    position: static !important;
+    animation: none !important;
+    transition: none !important;
+    text-align: center;
+    width: 100%;
+    margin-top: 0;
+    padding: 10px 0;
+}
+
+/* Tambahkan padding atas agar konten tidak tertutup */
+#elemen, #element-list {
+    padding-top: 60px;
+}
+#combine-chatbox {
+    background: white !important;
+    color: black !important;
+    height: 0vh;
+    top: auto !important;
+    bottom: 0;
+}
+#reset {
+    padding-top: 80px; /* Tambahkan jarak dari atas */
+    text-align: center; /* Pastikan teks dan tombol tetap di tengah */
+}
+
+#reset button {
+    margin-top: 20px; /* Beri jarak tambahan antara teks dan tombol */
+}
+#toko-items {
+    justify-content: center;
+    padding: 20px;
+}
+
+#toko-items .item {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+#toko-items .item:hover {
+    transform: scale(1.05);
+}
+
+/* Pusatkan Pencapaian */
+#achievement-container {
+    justify-content: center;
+    padding: 0px;
+}
+
+.achievement {
+    width: 300px;
+    margin: 0px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Pusatkan Koleksi Langka */
+#koleksi-items > div {
+    width: 100%;
+    justify-content: center;
+}
+
+.langka-grid {
+    justify-content: center;
+    padding: 0px;
+}
+
+/* Perbaikan Layout Umum */
+.container {
+    justify-content: center;
+    padding: 20px;
+}
+
+.item {
+    flex: 0 0 auto;
+    margin: 0px;
+}
+    </style>
+</head>
+<body>
+    <!-- Chatbox HTML di atas layar -->
+<div id="chatbox" style="position: fixed; top: 0; width: 100%; background-color: #004085; padding: 10px; border-bottom: 2px solid #ccc; height: 4vh; overflow-y: auto;">
+    <!-- Isi chatbox bisa ditambahkan di sini -->
+</div>
+<!-- Di bagian body -->
+<div id="chatbox" style="position: fixed; top: 0; ..."></div> <!-- Tetap untuk notifikasi sistem -->
+<div class="chatbox" id="combine-chatbox"></div> <!-- Tambahkan ini untuk proses kombinasi -->
+     <div class="chatbox" id="chatbox"></div>
+    <div id="toggle-sidebar" onclick="toggleSidebar()">☰</div>
+<div id="sidebar">
+    <button id="tab-elemen" class="active" onclick="showTab('elemen')">Gabungkan Elemen 🧪</button>
+    <button id="tab-element-list" onclick="showTab('element-list')">Elemen 🔬</button>
+    <button id="tab-koleksi" onclick="showTab('koleksi')">Koleksi 🗂️</button>
+    <button id="tab-toko" onclick="showTab('toko')">Toko 🛒</button>
+    <button id="tab-pencapaian" onclick="showTab('pencapaian')">Pencapaian 🏆</button>
+    <button id="tab-reset" onclick="showTab('reset')">Reset Game 🔄</button>
+</div>
+
+<div id="content">
+    <div id="reset" class="tab-content" style="display: none;">
+    <h1>Reset Game</h1>
+    <button onclick="resetLocalStorage()" style="background-color: red; color: white; padding: 10px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer;">
+        Reset Game
+    </button>
+</div>
+    <div id="elemen" class="tab-content">
+        <h1>Gabungkan Elemen</h1>
+        <div id="fraction">0/0</div>
+        <div id="progress">
+            <div id="progress-bar"></div>
+            <div id="progress-text">0%</div>
+        </div>
+        <div class="container" id="items"></div>
+        <div id="result"></div>
+    </div>
+
+    <div id="element-list" class="tab-content" style="display: none;">
+        <h1>Daftar Elemen</h1>
+        <div class="container" id="element-container"></div>
+    </div>
+</div>
+        <div class="container" id="items"></div>
+        <div id="result"></div>
+    <div id="element-list" class="tab-content" style="display: none;">
+    <h1>Daftar Elemen</h1>
+    <div class="container" id="element-container"></div>
+</div>
+    </div>
+    <div id="koleksi" class="tab-content" style="display: none;">
+        <h1>Koleksi</h1>
+        <div class="container" id="koleksi-items"></div>
+    </div>
+    <div id="toko" class="tab-content" style="display: none;">
+        <h1>Toko</h1>
+        <div class="container" id="toko-items"></div>
+    </div>
+    <div id="pencapaian" class="tab-content" style="display: none;">
+        <h1>Pencapaian</h1>
+        <div id="achievement-container"></div>
+    </div>
+</div>
+
+<div id="saldo-container">
+    <p id="koin">Koin🪙: 0</p>
+    <p id="kunci">Kunci🔑: 0</p>
+</div>
+
+<div id="chat-box"></div>
+
+<div id="confirmation">
+    <p id="confirmation-text"></p>
+    <button id="confirm-btn" onclick="confirmPurchase(true)">✓</button>
+    <button id="cancel-btn" onclick="confirmPurchase(false)">✕</button>
+</div>
+
+<audio id="sound" src="combine.mp3"></audio>
+    <script>
+        let collectedItems = []; // Menyimpan elemen yang sudah dikumpulkan
+        let discoveredElements = JSON.parse(localStorage.getItem("elements")) || [
+    { name: "Air", emoji: "💧" },
+    { name: "Api", emoji: "🔥" },
+    { name: "Tanah", emoji: "🌱" },
+    { name: "Udara", emoji: "🌬️" }
+];
+
+const kombinasi = {
+    // Level 1: Kombinasi Dasar (6)
+    "Air+Api": { name: "Uap", emoji: "☁️🔥" },
+    "Tanah+Air": { name: "Lumpur", emoji: "🌱💧" },
+    "Udara+Api": { name: "Asap", emoji: "💨" },
+    "Tanah+Api": { name: "Lava", emoji: "🌋" },
+    "Udara+Tanah": { name: "Debu", emoji: "🌪️" },
+    "Udara+Air": { name: "Angin", emoji: "💨🌪️" },
+
+    // Level 2: Kombinasi Menengah (12)
+    "Lumpur+Api": { name: "Batu Bata", emoji: "🧱" },
+    "Debu+Air": { name: "Pasir", emoji: "🏖️" },
+    "Uap+Udara": { name: "Awan", emoji: "☁️" },
+    "Lava+Air": { name: "Batu", emoji: "🪨" },
+    "Angin+Api": { name: "Listrik", emoji: "⚡" },
+    "Pasir+Api": { name: "Kaca", emoji: "🏺" },
+    "Asap+Air": { name: "Kabut", emoji: "🌫️" },
+    "Uap+Tanah": { name: "Geyser", emoji: "🌋💧" },
+    "Debu+Api": { name: "Abu", emoji: "🕳️🔥" },
+    "Angin+Tanah": { name: "Badai Pasir", emoji: "🌪️🏜️" },
+    "Lava+Udara": { name: "Batu Apung", emoji: "🪨🔥" },
+    "Lumpur+Udara": { name: "Tanah Liat", emoji: "🏺" },
+
+    // Level 3: Kombinasi Lanjut (20)
+    "Batu+Air": { name: "Kerikil", emoji: "🪨" },
+    "Awan+Listrik": { name: "Petir", emoji: "⛈️" },
+    "Batu+Udara": { name: "Pasir Kering", emoji: "🏜️" },
+    "Listrik+Air": { name: "Es", emoji: "❄️" },
+    "Batu Bata+Batu Bata": { name: "Tembok", emoji: "🧱🧱" },
+    "Kaca+Udara": { name: "Lensa", emoji: "🔍" },
+    "Kerikil+Batu": { name: "Patung", emoji: "🗿"},
+    "Es+Lava": { name: "Obsidian", emoji: "🪨💎" },
+    "Abu+Air": { name: "Lumpur Hitam", emoji: "🌑💧" },
+    "Geyser+Api": { name: "Energi Panas", emoji: "♨️" },
+    "Tanah Liat+Api": { name: "Gerabah", emoji: "🏺🔥" },
+    "Batu Apung+Air": { name: "Sabut", emoji: "🧽" },
+    "Kabut+Udara": { name: "Embun", emoji: "💧☁️" },
+    "Badai Pasir+Air": { name: "Erosi", emoji: "🏜️💧" },
+    "Energi Panas+Udara": { name: "Panas", emoji: "🌡️" },
+    "Gerabah+Tanah": { name: "Vas", emoji: "🌸🏺" },
+    "Sabut+Api": { name: "Kawat", emoji: "🧵🔥" },
+    "Embun+Api": { name: "Air Hangat", emoji: "🛀" },
+    "Erosi+Batu": { name: "Ngarai", emoji: "⛰️" },
+    "Panas+Air": { name: "Air Mendidih", emoji: "♨️💧" },
+
+    // Level 4: Kombinasi Kompleks (30)
+    "Es+Udara": { name: "Salju", emoji: "❄️🌬️" },
+    "Petir+Tanah": { name: "Plasma", emoji: "⚡🌱" },
+    "Tembok+Tembok": { name: "Rumah", emoji: "🏠" },
+    "Lensa+Air": { name: "Mikroskop", emoji: "🔬" },
+    "Salju+Salju": { name: "Gletser", emoji: "❄️🏔️" },
+    "Plasma+Api": { name: "Energi", emoji: "💥" },
+    "Hujan+Tanah": { name: "Tumbuhan", emoji: "🌿" },
+    "Panas+Tanah": { name: "Gurun", emoji: "🏜️" },
+    "Vas+Air": { name: "Bunga", emoji: "💐" },
+    "Kawat+Listrik": { name: "Kabel", emoji: "🔌" },
+    "Air Mendidih+Udara": { name: "Pressure", emoji: "🔼" },
+    "Ngarai+Air": { name: "Sungai", emoji: "🌊" },
+    "Tumbuhan+Api": { name: "Arang", emoji: "🪵🔥" },
+    "Gurun+Udara": { name: "Tornado", emoji: "🌪️" },
+    "Bunga+Udara": { name: "Aroma", emoji: "👃" },
+    "Kabel+Logam": { name: "Listrik Statis", emoji: "⚡🔌" },
+
+    // Level 5: Kombinasi Modern (25)
+    "Energi+Udara": { name: "Pesawat", emoji: "✈️" },
+    "Mikroskop+Batu": { name: "Logam", emoji: "🏗️" },
+    "Rumah+Logam": { name: "Gedung", emoji: "🏢" },
+    "Logam+Listrik": { name: "Robot", emoji: "🤖" },
+    "Pesawat+Energi": { name: "Roket", emoji: "🚀" },
+    "Robot+Udara": { name: "Drone", emoji: "🛸" },
+    "Arang+Tanah": { name: "Pupuk", emoji: "🌱🪵" },
+    "Tornado+Air": { name: "Badai", emoji: "⛈️" },
+    "Aroma+Bunga": { name: "Parfum", emoji: "🌸" },
+    "Pressure+Udara": { name: "Kompresor", emoji: "🎚️" },
+    "Sungai+Tanah": { name: "Delta", emoji: "🜖" },
+    "Pupuk+Tumbuhan": { name: "Sayuran", emoji: "🥦" },
+    "Badai+Listrik": { name: "Supercell", emoji: "🌩️" },
+    "Parfum+Air": { name: "Minyak Wangi", emoji: "💧🌸" },
+    "Kompresor+Udara": { name: "Angin Bertekanan", emoji: "💨🎚️" },
+
+    // Level 6: Kombinasi Luar Angkasa (20)
+    "Roket+Udara": { name: "Satelit", emoji: "🛰️" },
+    "Satelit+Satelit": { name: "Stasiun Luar Angkasa", emoji: "🛰️🛰️" },
+    "Gletser+Waktu": { name: "Gunung Es", emoji: "🏔️❄️" },
+    "Drone+Logam": { name: "AI", emoji: "🧠" },
+    "Stasiun Luar Angkasa+AI": { name: "Cyberspace", emoji: "💻🌐" },
+    "Logam+Panas": { name: "Baja", emoji: "🔩🔥" },
+    "Supercell+Air": { name: "Hurricane", emoji: "🌀" },
+    "Minyak Wangi+Api": { name: "Lilin", emoji: "🕯️" },
+    "Angin Bertekanan+Air": { name: "Jetstream", emoji: "✈️💨" },
+    "Delta+Tanah": { name: "Ekosisitem", emoji: "🌍" },
+    "Baja+Listrik": { name: "Magnet", emoji: "🧲" },
+    "Hurricane+Udara": { name: "Typhoon", emoji: "🌀🌪️" },
+    "Lilin+Udara": { name: "Oksigen", emoji: "💨🕯️" },
+    "Jetstream+Logam": { name: "Pesawat Supersonik", emoji: "✈️💨" },
+    "Ekosisitem+Air": { name: "Biosfer", emoji: "🌏💧" },
+
+    // Level 7: Kombinasi Futuristik (7)
+    "Magnet+Listrik": { name: "Generator", emoji: "⚡🔋" },
+    "Typhoon+Energi": { name: "Energi Hijau", emoji: "🌱⚡" },
+    "Oksigen+Api": { name: "Ozon", emoji: "🛡️" },
+    "Pesawat Supersonik+AI": { name: "Auto-Pilot", emoji: "🤖✈️" },
+    "Biosfer+Tanah": { name: "Terraform", emoji: "🪐" },
+    "Generator+Energi": { name: "Reaktor Nuklir", emoji: "☢️" },
+    "Terraform+Waktu": { name: "Planet", emoji: "🪐⏳" },
+    
+    // Level 8: Kombinasi Advanced (30)
+    "Kaca+Logam": { name: "Kaca Pengaman", emoji: "🔒🔍" },
+    "Baja+Listrik": { name: "Elektromagnet", emoji: "🧲⚡" },
+    "Mikroskop+Listrik": { name: "Mikroskop Elektron", emoji: "🔬⚡" },
+    "Tumbuhan+Udara": { name: "Oksigen Murni", emoji: "🌿💨" },
+    "Gedung+Kaca": { name: "Pencakar Langit", emoji: "🏙️" },
+    "Robot+AI": { name: "Android", emoji: "🤖🧠" },
+    "Es+Pressure": { name: "Es Kering", emoji: "❄️🎚️" },
+    "Sungai+Batu": { name: "Air Terjun", emoji: "🌊⛰️" },
+    "Angin+Turbin": { name: "Pembangkit Angin", emoji: "🌪️⚡" },
+    "Obsidian+Api": { name: "Pisau Obsidian", emoji: "🗡️🪨" },
+    "Lumpur+Tumbuhan": { name: "Rawa", emoji: "🌾💧" },
+    "Petir+Logam": { name: "Penangkal Petir", emoji: "⚡🏗️" },
+    "Satelit+Roket": { name: "Peluncur Satelit", emoji: "🛰️🚀" },
+    "Bunga+Udara": { name: "Serbuk Sari", emoji: "🌸💨" },
+    "Energi+Generator": { name: "Pembangkit Listrik", emoji: "⚡🏭" },
+    "Kompresor+Udara": { name: "Udara Bertekanan", emoji: "💨🎚️" },
+    "Gurun+Air": { name: "Oasis", emoji: "🏜️💧" },
+    "Logam+Panas": { name: "Cairan Logam", emoji: "🔥🏗️" },
+    "Parfum+Api": { name: "Aromaterapi", emoji: "🌸🔥" },
+    "Biosfer+Air": { name: "Ekosistem Air", emoji: "🌊🌿" },
+
+    // Level 9: Teknologi Modern (25)
+    "Drone+Kamera": { name: "Drone Pengintai", emoji: "🛸📷" },
+    "AI+Cyberspace": { name: "Neural Network", emoji: "🧠🌐" },
+    "Pesawat+Auto-Pilot": { name: "Pesawat Otomatis", emoji: "✈️🤖" },
+    "Energi+Air": { name: "Sel Bahan Bakar", emoji: "⚡💧" },
+    "Reaktor+Air": { name: "PLTN", emoji: "☢️💧" },
+    "Baja+Magnet": { name: "Maglev", emoji: "🧲🚄" },
+    "Robot+Logam": { name: "Robot Industri", emoji: "🏗️🤖" },
+    "Kabel+Optik": { name: "Fiber Optik", emoji: "🔌🌈" },
+    "Listrik+Pressure": { name: "Laser", emoji: "🔦⚡" },
+    "Solar Panel+Sun": { name: "Energi Surya", emoji: "☀️⚡" },
+
+    // Level 10: Ekosistem Kompleks (20)
+    "Tanah Subur+Tumbuhan": { name: "Perkebunan", emoji: "🌾🌱" },
+    "Oksigen+Api": { name: "Pembakaran", emoji: "💨🔥" },
+    "Biosfer+Udara": { name: "Atmosfer", emoji: "🌍💨" },
+    "Ekosisitem+Air": { name: "Biosfer Marinir", emoji: "🐠🌊" },
+    "Hutan+Air": { name: "Hutan Hujan", emoji: "🌳🌧️" },
+    "Terumbu+Karang": { name: "Ekosistem Karang", emoji: "🐚🌊" },
+
+    // Level 11: Teknologi Quantum (15)
+    "AI+Quantum": { name: "Quantum AI", emoji: "🧠⚛️" },
+    "Energi+Quantum": { name: "Energi Zero-Point", emoji: "⚡⚛️" },
+    "Cyberspace+Quantum": { name: "Metaverse", emoji: "🌐⚛️" },
+    "Satelit+Quantum": { name: "Komunikasi Quantum", emoji: "🛰️⚛️" },
+
+    // Level 12: Kosmik (10)
+    "Planet+Energi": { name: "Bintang", emoji: "⭐🌟" },
+    "Bintang+Debu": { name: "Nebula", emoji: "🌌✨" },
+    "Black Hole+Energi": { name: "Wormhole", emoji: "🕳️🌀" },
+    "Galaksi+AI": { name: "Peradaban Tingkat III", emoji: "🌌🧠" }
+};    
+
+// Hapus elemen awal yang tidak diperlukan dari localStorage
+localStorage.setItem("elements", JSON.stringify(discoveredElements.filter(e => 
+    ["Air", "Api", "Tanah", "Udara"].includes(e.name)
+)));
+// Ubah inisialisasi koin
+let koin = parseInt(localStorage.getItem("koin")) || 50; // Default 50 koin awal
+        let kunci = parseInt(localStorage.getItem("kunci")) || 0;
+        let koleksi = JSON.parse(localStorage.getItem("koleksi")) || [];
+        let itemToBuy = null;
+        const tokoItems = [
+    // ==================== BARANG BIASA ====================
+    { 
+        name: "Emas", 
+        emoji: "🪙", 
+        harga: 20, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Piala", 
+        emoji: "🏆", 
+        harga: 50, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Lampu", 
+        emoji: "💡", 
+        harga: 20, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Berlian", 
+        emoji: "💎", 
+        harga: 100, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Bintang", 
+        emoji: "⭐", 
+        harga: 40, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {   
+        name: "Jam Pasir",
+        emoji: "⏳",
+        harga: 40,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+
+    // ==================== PETI MYSTERI ====================
+    { 
+        name: "Peti Kecil", 
+        emoji: "🎁🥉", 
+        type: "chest",
+        harga: 5, 
+        tier: "bronze",
+        menggunakanKoin: false,
+        hadiah: [
+            { name: "Cincin Berlian", emoji: "💍", probabilitas: 60 },
+            { name: "Medali Emas", emoji: "🥇", probabilitas: 40 }
+        ]
+    },
+    { 
+        name: "Peti Sedang", 
+        emoji: "🎁🥈", 
+        type: "chest",
+        harga: 8, 
+        menggunakanKoin: false,
+        hadiah: [
+            { name: "Robot", emoji: "🤖", probabilitas: 50 },
+            { name: "Permata Langka", emoji: "💎✨", probabilitas: 45 },
+            { name: "Pesawat", emoji: "✈️", probabilitas: 5 }
+        ]
+    },
+    { 
+        name: "Peti Besar", 
+        emoji: "🎁🥇", 
+        type: "chest",
+        harga: 12, 
+        menggunakanKoin: false,
+        hadiah: [
+            { name: "Buku Rahasia", emoji: "📖✨", probabilitas: 40 },
+            { name: "Mahkota Emas", emoji: "👑🌟", probabilitas: 55 },
+            { name: "Komet", emoji: "💫", probabilitas: 4 },
+            { name: "Galaksi", emoji: "🌌", probabilitas: 1 }
+        ]
+    },
+    { 
+        name: "Peti Eksklusif", 
+        emoji: "🎁🏆", 
+        type: "chest",
+        harga: 15, 
+        menggunakanKoin: false,
+        hadiah: [
+            { name: "Planet", emoji: "🪐", probabilitas: 20 },
+            { name: "Alien", emoji: "👽", probabilitas: 80 }
+        ]
+    },
+
+    // ==================== ITEM KHUSUS ====================
+    { 
+        name: "Kunci", 
+        emoji: "🔑", 
+        harga: 10, 
+        menggunakanKoin: true,
+        type: "special",
+        efek: "Membuka peti misteri"
+    }
+        ];
+
+        function updateItems() {
+            discoveredElements.sort((a, b) => a.name.localeCompare(b.name));
+            localStorage.setItem("elements", JSON.stringify(discoveredElements));
+            
+            localStorage.setItem("koin", koin.toString());
+            document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+
+            const totalElements = 100;
+            const persentase = ((discoveredElements.length / totalElements) * 100).toFixed(2);
+            document.getElementById("fraction").innerText = `${discoveredElements.length}/${totalElements}`;
+            document.getElementById("progress-text").innerText = `${persentase}%`;
+
+            let progress = (discoveredElements.length / totalElements) * 100;
+            document.getElementById("progress-bar").style.width = progress + "%";
+
+            const itemsDiv = document.getElementById("items");
+            itemsDiv.innerHTML = "";
+            discoveredElements.forEach(el => {
+                let div = document.createElement("div");
+                div.classList.add("item");
+                div.setAttribute("data-name", el.name);
+                div.innerHTML = `<span>${el.emoji} ${el.name}</span>`;
+                div.addEventListener("click", () => selectItem(div));
+                itemsDiv.appendChild(div);
+            });
+
+            const koleksiDiv = document.getElementById("koleksi-items");
+            koleksiDiv.innerHTML = "";
+
+            const barangBiasa = [
+                { name: "Emas", emoji: "🪙" }, // Barang biasa pertama
+                { name: "Piala", emoji: "🏆" },
+                { name: "Lampu", emoji: "💡" },
+                { name: "Berlian", emoji: "💎" },
+                { name: "Bintang", emoji: "⭐" },
+                { name: "Jam Pasir", emoji: "⏳" }
+            ];
+
+            const barangLangka = [
+                { name: "Cincin Berlian", emoji: "💍" },
+                { name: "Medali Emas", emoji: "🥇" },
+                { name: "Robot", emoji: "🤖" },
+                { name: "Permata Langka", emoji: "💎✨" },
+                { name: "Buku Rahasia", emoji: "📖✨" },
+                { name: "Mahkota Emas", emoji: "👑🌟" },
+                { name: "Planet", emoji: "🪐" },
+                { name: "Alien", emoji: "👽" }
+            ];
+
+            const barangMitos = [
+                { name: "Pesawat", emoji: "✈️" },
+                { name: "Komet", emoji: "💫" }
+            ];
+
+            const barangRahasia = [
+                { name: "Galaksi", emoji: "🌌" }
+            ];
+
+            // Barang Biasa
+const biasaDiv = document.createElement("div");
+biasaDiv.innerHTML = "<h3>Barang Biasa</h3>";
+const biasaGrid = document.createElement("div");
+biasaGrid.style.display = "flex";
+biasaGrid.style.flexWrap = "wrap";
+biasaGrid.style.gap = "0px";
+biasaGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangBiasa.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "10px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: black; color: white; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    biasaGrid.appendChild(itemDiv);
+});
+
+biasaDiv.appendChild(biasaGrid);
+koleksiDiv.appendChild(biasaDiv);
+
+            // Barang Biasa
+const langkaDiv = document.createElement("div");
+langkaDiv.innerHTML = "<h3>Barang Biasa</h3>";
+const langkaGrid = document.createElement("div");
+langkaGrid.style.display = "flex";
+langkaGrid.style.flexWrap = "wrap";
+langkaGrid.style.gap = "10px";
+langkaGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangLangka.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "5px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: blue; color: white; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    langkaGrid.appendChild(itemDiv);
+});
+
+langkaDiv.appendChild(langkaGrid);
+koleksiDiv.appendChild(langkaDiv);
+
+            // Barang Biasa
+const mitosDiv = document.createElement("div");
+mitosDiv.innerHTML = "<h3>Barang Biasa</h3>";
+const mitosGrid = document.createElement("div");
+mitosGrid.style.display = "flex";
+mitosGrid.style.flexWrap = "wrap";
+mitosGrid.style.gap = "10px";
+mitosGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangMitos.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "5px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: yellow; color: black; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    mitosGrid.appendChild(itemDiv);
+});
+
+mitosDiv.appendChild(mitosGrid);
+koleksiDiv.appendChild(mitosDiv);
+
+            // Barang Biasa
+const rahasiaDiv = document.createElement("div");
+rahasiaDiv.innerHTML = "<h3>Barang Biasa</h3>";
+const rahasiaGrid = document.createElement("div");
+rahasiaGrid.style.display = "flex";
+rahasiaGrid.style.flexWrap = "wrap";
+rahasiaGrid.style.gap = "10px";
+rahasiaGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangRahasia.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "10px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: red; color: white; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    rahasiaGrid.appendChild(itemDiv);
+});
+
+rahasiaDiv.appendChild(rahasiaGrid);
+koleksiDiv.appendChild(rahasiaDiv);
+}
+        
+        function selectItem(itemDiv) {
+    const itemName = itemDiv.getAttribute("data-name");
+    console.log("Item diklik:", itemName); // Debugging
+
+    if (selectedItems.includes(itemName)) {
+        selectedItems = selectedItems.filter(item => item !== itemName);
+        itemDiv.classList.remove("selected");
+    } else {
+        if (selectedItems.length < 2) {
+            selectedItems.push(itemName);
+            itemDiv.classList.add("selected");
+        } else {
+            alert("Anda hanya dapat memilih maksimal 2 elemen!");
+            return; // Mencegah pemilihan lebih dari 2 elemen
+        }
+    }
+
+    console.log("Selected Items:", selectedItems); // Debugging
+
+    // Update chatbox
+    if (selectedItems.length === 1) {
+        document.getElementById("chatbox").innerText = `${selectedItems[0]} +`;
+    } else if (selectedItems.length === 2) {
+        combineItems();
+    }
+}    
+function resetLocalStorage() {
+    // Pastikan localStorage dapat diakses
+    if (typeof localStorage !== "undefined") {
+        localStorage.clear(); // Hapus semua data localStorage
+        alert("Game telah direset!"); // Beri notifikasi ke pengguna
+        location.reload(); // Muat ulang halaman agar elemen kembali ke awal
+    } else {
+        alert("Browser tidak mendukung localStorage.");
+    }
+}
+
+        function showTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
+            document.getElementById(tabName).style.display = "block";
+
+            document.querySelectorAll("#sidebar button").forEach(button => button.classList.remove("active"));
+            document.getElementById(`tab-${tabName}`).classList.add("active");
+
+            if (tabName === "toko") {
+  
+  updateTokoItems();
+            }
+        }
+
+        function updateTokoItems() {
+    const tokoDiv = document.getElementById("toko-items");
+    tokoDiv.innerHTML = "";
+
+    tokoItems.forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item");
+        
+        // Tambahkan atribut data-type untuk peti
+        if (item.type === "chest") {
+            itemDiv.setAttribute("data-type", "chest");
+        }
+
+        // PERBAIKAN 1: Cek kepemilikan yang benar
+        const isSpecialItem = item.type === "chest" || item.name === "Kunci";
+        const sudahMemiliki = !isSpecialItem && koleksi.find(i => i.name === item.name);
+        
+        // PERBAIKAN 2: Handle tampilan untuk peti
+        if (item.type === "chest") {
+            itemDiv.innerHTML = `
+                <div class="chest-header">
+                    ${item.emoji} 
+                    <span class="chest-name">${item.name}</span>
+                </div><br>
+                <div class="chest-details">
+                    <span>Harga: ${item.harga} kunci</span>
+                    
+                </div>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+        // Handle item biasa
+        else if (sudahMemiliki) {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                <br>
+                <span class="owned-badge" style="color: gray;">Anda sudah memiliki ${item.name}</span>
+            `;
+        } else {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                <br>
+                <span>Harga: ${item.harga} ${item.menggunakanKoin ? "koin" : "kunci"}</span>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+
+        tokoDiv.appendChild(itemDiv);
+    });
+}
+
+let selectedItems = [];
+function combineItems() {
+    if (selectedItems.length !== 2) return; // Pastikan hanya 2 elemen yang dipilih
+
+    const [elemen1, elemen2] = selectedItems;
+    const resultDiv = document.getElementById("result");
+    const chatbox = document.getElementById("chatbox");
+
+    if (!resultDiv || !chatbox) {
+        alert("❌ Error: Elemen 'result' atau 'chatbox' tidak ditemukan!");
+        return;
+    }
+
+    const key1 = `${elemen1}+${elemen2}`;
+    const key2 = `${elemen2}+${elemen1}`;
+
+    let hasil = kombinasi[key1] || kombinasi[key2];
+
+    if (hasil) {
+        resultDiv.innerHTML = `<span style="color: blue;">${elemen1} + ${elemen2} = ${hasil}</span>`;
+        chatbox.innerHTML = `<span style="color: green;">${elemen1} + ${elemen2} = ${hasil}</span>`;
+
+        // **Hapus elemen lama & simpan elemen baru**
+        if (!collectedItems.includes(hasil)) {
+            collectedItems.push(hasil);
+            localStorage.removeItem("elements"); // Hapus data lama
+            localStorage.setItem("elements", JSON.stringify(collectedItems)); // Simpan data baru
+            addItem(hasil); // Pastikan elemen baru muncul
+        }
+    } else {
+        resultDiv.innerHTML = `<span style="color: red;">${elemen1} + ${elemen2} = Kombinasi tidak valid</span>`;
+        chatbox.innerHTML = `<span style="color: red;">${elemen1} + ${elemen2} = Kombinasi tidak valid</span>`;
+    }
+
+    // **Reset pilihan elemen setelah kombinasi**
+    selectedItems = [];
+    document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+}
+        
+function buyItem(item) {
+    if (item.menggunakanKoin) {
+        if (koin >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} koin?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Koin tidak cukup!");
+        }
+    } else {
+        if (kunci >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} kunci?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Kunci tidak cukup!");
+        }
+    }
+}
+
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    // Perbaikan 1: Tambahkan null checking
+    if (!itemToBuy) {
+        console.error("Item tidak ditemukan!");
+        return;
+    }
+
+    // Perbaikan 2: Pindahkan blok if ke dalam fungsi yang benar
+    if (confirm) {
+        console.log("Sebelum pembelian, koin:", koin);
+        console.log("Harga item:", itemToBuy.harga);
+
+        // Perbaikan 3: Validasi saldo sebelum transaksi
+        if (itemToBuy.menggunakanKoin) {
+            if (koin < itemToBuy.harga) {
+                alert("Koin tidak cukup!");
+                return;
+            }
+            koin -= itemToBuy.harga;
+        } else {
+            if (kunci < itemToBuy.harga) {
+                alert("Kunci tidak cukup!");
+                return;
+            }
+            kunci -= itemToBuy.harga;
+        }
+
+        // Perbaikan 4: Update saldo setelah transaksi
+        localStorage.setItem("koin", koin.toString());
+        localStorage.setItem("kunci", kunci.toString());
+        document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+        document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+
+        // Perbaikan 5: Handle pembelian kunci vs item lain
+        if (itemToBuy.name === "Kunci") {
+            kunci += 1;
+            localStorage.setItem("kunci", kunci.toString());
+            alert("🔑 Kunci berhasil dibeli!");
+        } else if (itemToBuy.type === "chest") {
+            // Handle pembukaan peti
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🎁 Dapatkan: ${hadiah.emoji} ${hadiah.name}`);
+        } else {
+            koleksi.push(itemToBuy);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🛍️ Anda membeli: ${itemToBuy.emoji} ${itemToBuy.name}`);
+        }
+
+        // Perbaikan 6: Update UI dan reset variabel
+        updateItems();
+        updateTokoItems();
+        itemToBuy = null; // Reset setelah transaksi
+    }
+}
+        function getRandomHadiah(hadiahList) {
+            const totalProbabilitas = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+            const randomNum = Math.random() * totalProbabilitas;
+            let cumulativeProbabilitas = 0;
+
+            for (const item of hadiahList) {
+                cumulativeProbabilitas += item.probabilitas;
+                if (randomNum <= cumulativeProbabilitas) {
+                    return item;
+                }
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            sidebar.classList.toggle("active");
+            content.classList.toggle("sidebar-active");
+        }
+
+        updateItems();
+        showTab("elemen");
+    function updateTokoItems() {
+    const tokoDiv = document.getElementById("toko-items");
+    tokoDiv.innerHTML = "";
+
+    tokoItems.forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item");
+        
+        // Tambahkan atribut data-type untuk peti
+        if (item.type === "chest") {
+            itemDiv.setAttribute("data-type", "chest");
+        }
+
+        // PERBAIKAN 1: Cek kepemilikan yang benar
+        const isSpecialItem = item.type === "chest" || item.name === "Kunci";
+        const sudahMemiliki = !isSpecialItem && koleksi.find(i => i.name === item.name);
+        
+        // PERBAIKAN 2: Handle tampilan untuk peti
+        if (item.type === "chest") {
+            itemDiv.innerHTML = `
+                <div class="chest-header">
+                    ${item.emoji} 
+                    <span class="chest-name">${item.name}</span>
+                </div><br>
+                <div class="chest-details">
+                    <span>Harga: ${item.harga} kunci</span>
+                    
+                </div>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+        // Handle item biasa
+        else if (sudahMemiliki) {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                <br>
+                <span class="owned-badge" style="color: gray;">Anda sudah memiliki ${item.name}</span>
+            `;
+        } else {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                <br>
+                <span>Harga: ${item.harga} ${item.menggunakanKoin ? "koin" : "kunci"}</span>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+
+        tokoDiv.appendChild(itemDiv);
+    });
+}
+
+function combineItems() {
+    const [elem1, elem2] = selectedItems;
+    const combineChatbox = document.getElementById("combine-chatbox");
+    const systemChatbox = document.getElementById("chatbox");
+
+    const combinationKey = `${elem1}+${elem2}`;
+    const result = kombinasi[combinationKey] || kombinasi[`${elem2}+${elem1}`];
+
+    if(result) {
+        if(!discoveredElements.some(e => e.name === result.name)) {
+            discoveredElements.push(result);
+            localStorage.setItem("elements", JSON.stringify(discoveredElements));
+            systemChatbox.innerHTML = `<span class="combination-success">Berhasil membuat: ${result.emoji} ${result.name}!</span>`;
+            updateItems();
+        }
+        combineChatbox.innerHTML += `<br><span class="combination-success">= ${result.emoji} ${result.name}</span>`;
+    } else {
+        combineChatbox.innerHTML += `<br><span class="combination-error">= Kombinasi gagal!</span>`;
+    }
+
+    // Reset selection setelah 2 detik
+    setTimeout(() => {
+        selectedItems = [];
+        document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+        combineChatbox.innerHTML = "";
+    }, 2000);
+}
+        
+function buyItem(item) {
+    if (item.menggunakanKoin) {
+        if (koin >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} koin?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Koin tidak cukup!");
+        }
+    } else {
+        if (kunci >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} kunci?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Kunci tidak cukup!");
+        }
+    }
+}
+
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    // Perbaikan 1: Tambahkan null checking
+    if (!itemToBuy) {
+        console.error("Item tidak ditemukan!");
+        return;
+    }
+
+    // Perbaikan 2: Pindahkan blok if ke dalam fungsi yang benar
+    if (confirm) {
+        console.log("Sebelum pembelian, koin:", koin);
+        console.log("Harga item:", itemToBuy.harga);
+
+        // Perbaikan 3: Validasi saldo sebelum transaksi
+        if (itemToBuy.menggunakanKoin) {
+            if (koin < itemToBuy.harga) {
+                alert("Koin tidak cukup!");
+                return;
+            }
+            koin -= itemToBuy.harga;
+        } else {
+            if (kunci < itemToBuy.harga) {
+                alert("Kunci tidak cukup!");
+                return;
+            }
+            kunci -= itemToBuy.harga;
+        }
+
+        // Perbaikan 4: Update saldo setelah transaksi
+        localStorage.setItem("koin", koin.toString());
+        localStorage.setItem("kunci", kunci.toString());
+        document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+        document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+
+        // Perbaikan 5: Handle pembelian kunci vs item lain
+        if (itemToBuy.name === "Kunci") {
+            kunci += 1;
+            localStorage.setItem("kunci", kunci.toString());
+            alert("🔑 Kunci berhasil dibeli!");
+        } else if (itemToBuy.type === "chest") {
+            // Handle pembukaan peti
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🎁 Dapatkan: ${hadiah.emoji} ${hadiah.name}`);
+        } else {
+            koleksi.push(itemToBuy);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🛍️ Anda membeli: ${itemToBuy.emoji} ${itemToBuy.name}`);
+        }
+
+        // Perbaikan 6: Update UI dan reset variabel
+        updateItems();
+        updateTokoItems();
+        itemToBuy = null; // Reset setelah transaksi
+    }
+}
+        function getRandomHadiah(hadiahList) {
+            const totalProbabilitas = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+            const randomNum = Math.random() * totalProbabilitas;
+            let cumulativeProbabilitas = 0;
+
+            for (const item of hadiahList) {
+                cumulativeProbabilitas += item.probabilitas;
+                if (randomNum <= cumulativeProbabilitas) {
+                    return item;
+                }
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            sidebar.classList.toggle("active");
+            content.classList.toggle("sidebar-active");
+        }
+
+        updateItems();
+        showTab("elemen");
+    
+</script>
+    <script>
+    function combineElements() {
+    const chatbox = document.getElementById('chatbox');
+    let element1 = document.getElementById('element1').value.trim();
+    let element2 = document.getElementById('element2').value.trim();
+
+    if (!element1 || !element2) {
+        return;
+    }
+
+    // Show the first element in the chatbox
+    let message = document.createElement('div');
+    message.classList.add('message');
+    message.style.color = "black";
+    message.textContent = `${element1} +`;
+    chatbox.appendChild(message);
+
+    // Check combination validity
+    let resultMessage = document.createElement('div');
+    resultMessage.classList.add('message');
+
+    let combinationResult = "";
+    let resultColor = "";
+
+    // Define valid combinations (you can expand this with more combinations)
+    if (element1 === "Air" && element2 === "Api") {
+        combinationResult = "Air + Api = Uap";
+        resultColor = "green"; // Valid combination
+    } else if (element1 === "Api" && element2 === "Air") {
+        combinationResult = "Air + Api = Uap";
+        resultColor = "green"; // Valid combination
+    } else {
+        combinationResult = `${element1} + ${element2} = Kombinasi tidak valid`;
+        resultColor = "red"; // Invalid combination
+    }
+
+    resultMessage.style.color = resultColor;
+    resultMessage.textContent = combinationResult;
+    chatbox.appendChild(resultMessage);
+
+    // Clear the input fields for the next combination
+    document.getElementById('element1').value = "";
+    document.getElementById('element2').value = "";
+
+    // Scroll to the bottom of the chatbox
+    chatbox.scrollTop = chatbox.scrollHeight;
+};
+function selectItem(itemDiv) {
+    const itemName = itemDiv.getAttribute("data-name");
+    
+    if (selectedItems.includes(itemName)) {
+        selectedItems = selectedItems.filter(item => item !== itemName);
+        itemDiv.classList.remove("selected");
+    } else {
+        if (selectedItems.length < 2) {
+            selectedItems.push(itemName);
+            itemDiv.classList.add("selected");
+        } else {
+            alert("Terlalu cepat memilih elemen!");
+            return;
+        }
+    }
+
+    // Update chatbox
+    const chatMessage = selectedItems.join(" + ");
+    document.getElementById("chatbox").innerHTML = chatMessage;
+
+    // Auto combine jika sudah 2 elemen
+    if (selectedItems.length === 2) {
+        setTimeout(combineItems, 500);
+    }
+}
+
+    function updateAchievements() {
+    const achievementContainer = document.getElementById("achievement-container");
+    achievementContainer.innerHTML = ""; // Bersihkan dulu sebelum update
+
+    // Pastikan variabel ini ada di kode utama
+    const unlockedElements = JSON.parse(localStorage.getItem("unlockedElements")) || [];
+    const collectedItems = JSON.parse(localStorage.getItem("collectedItems")) || [];
+
+    const achievements = [
+        { id: "p1", text: "Buat 10 elemen", achieved: unlockedElements.length >= 10 },
+        { id: "p2", text: "Buat 20 elemen", achieved: unlockedElements.length >= 20 },
+        { id: "p3", text: "Buat 50 elemen", achieved: unlockedElements.length >= 50 },
+        { id: "p4", text: "Buat 100 elemen", achieved: unlockedElements.length >= 100 },
+        { id: "p5", text: "Buat 200 elemen", achieved:
+unlockedElements.length >=200 },
+        { id: "p6", text: "Miliki 3 barang biasa di koleksi", achieved: collectedItems.length >= 3 },
+        { id: "p7", text: "Miliki semua barang biasa di koleksi", achieved: collectedItems.length >= 6 }
+    ];
+    
+    const totalElements = discoveredElements.length; // Ganti dengan variabel yang menyimpan elemen yang ditemukan
+const totalItems = Object.keys(koleksi).length; // Hitung jumlah barang di koleksi
+
+achievements.forEach(ach => {
+    if (
+        (ach.id === "p1" && totalElements >= 10) ||
+        (ach.id === "p2" && totalElements >= 20) ||
+        (ach.id === "p3" && totalElements >= 50) ||
+        (ach.id === "p4" && totalElements >= 100) ||
+        (ach.id === "p5" && totalElements >= 200) ||
+        (ach.id === "p6" && totalItems >= 3) ||
+        (ach.id === "p7" && totalItems >= 6)
+    ) {
+        ach.achieved = true;
+    }
+});
+
+    achievements.forEach(ach => {
+        const div = document.createElement("div");
+        div.classList.add("achievement");
+        if (ach.achieved) div.classList.add("completed");
+
+        div.innerHTML = `<span class="icon">🏆</span> ${ach.text}`;
+        achievementContainer.appendChild(div);
+    });
+}
+
+// Panggil fungsi ini saat pertama kali halaman dimuat
+updateAchievements();
+function addItem(item) {
+    if (!collectedItems.includes(item)) {
+        collectedItems.push(item);
+        updateCollectionDisplay(); // Perbarui tampilan koleksi
+    }
+}
+</script>
+<script>
+function combineItems() {
+    if (selectedItems.length !== 2) return;
+
+    const [elemen1, elemen2] = selectedItems;
+    const key1 = `${elemen1}+${elemen2}`;
+    const key2 = `${elemen2}+${elemen1}`;
+    
+    let hasil = kombinasi[key1] || kombinasi[key2];
+    const chatbox = document.getElementById("chatbox");
+
+    if (hasil) {
+        // Cek apakah elemen sudah ada
+        const sudahAda = discoveredElements.some(e => e.name === hasil.name);
+        
+        if (!sudahAda) {
+            discoveredElements.push(hasil);
+            localStorage.setItem("elements", JSON.stringify(discoveredElements));
+            
+            chatbox.innerHTML = `<span class="combination-success">Berhasil membuat ${hasil.emoji} ${hasil.name}!</span>`;
+            updateItems();
+        } else {
+            chatbox.innerHTML = `<span class="combination-discovery">Elemen ${hasil.name} sudah ditemukan!</span>`;
+        }
+    } else {
+        chatbox.innerHTML = `<span class="combination-error">Kombinasi tidak valid!</span>`;
+    }
+
+    // Reset pilihan
+    selectedItems = [];
+    document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+}
+</script>
+<script>
+    function updateElementList() {
+    let container = document.getElementById("element-container");
+    if (!container) return;
+
+    container.innerHTML = ""; // Kosongkan dulu
+
+    discoveredElements.forEach(element => {
+        let div = document.createElement("div");
+        div.className = "element-item";
+        div.innerHTML = `${element.emoji} ${element.name}`;
+        container.appendChild(div);
+    });
+}
+</script>
+<script>
+    function showTab(tabName) {
+    document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
+    document.getElementById(tabName).style.display = "block";
+
+    document.querySelectorAll("#sidebar button").forEach(button => button.classList.remove("active"));
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+}
+</script>
+<script>
+    function resetLocalStorage() {
+    let confirm1 = confirm("⚠️ Apakah kamu yakin ingin mereset game?");
+    if (!confirm1) return;
+
+    let confirm2 = confirm("⚠️ Ini adalah konfirmasi kedua! Data akan dihapus permanen.");
+    if (!confirm2) return;
+
+    let confirm3 = confirm("⚠️ Ini adalah konfirmasi terakhir! Tekan OK untuk menghapus semua progres.");
+    if (!confirm3) return;
+
+    localStorage.clear(); // Hapus semua data yang tersimpan
+    location.reload(); // Muat ulang halaman untuk kembali ke kondisi awal
+}
+</script>
+<style>
+/* Tambahkan di bagian style */
+#toko-items .item {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 150px;
+}
+
+#toko-items .item span {
+    display: block;
+    margin: 5px 0;
+}
+</style>
+</body>
+</html>
