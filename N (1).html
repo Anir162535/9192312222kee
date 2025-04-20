@@ -1,0 +1,5261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinicraft</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #3498db;
+            color: white;
+        }
+
+    .valid { color: green; }
+    .invalid { color: red; }
+    .new-element { color: blue; }
+    function updateChatbox(message, type = "") {
+        const chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML = `<span class="${type}">${message}</span>`;
+    }
+
+        /* Kombinasi Text Colors */
+        .combination-success {
+            color: #27ae60 !important;
+            animation: text-glow-green 1s;
+        }
+        
+        #saldo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Pastikan elemen rata kiri */
+}
+
+#koin {
+    margin-top: 2.5px; /* Kurangi jarak bawah koin 
+    margin-left: 0px;*/
+}
+
+#kunci {
+    margin-top: 2.5px; /* Tambah jarak atas kunci */
+}
+        
+        #koin {
+    margin-left: 140px; /* Geser ke kanan */
+}
+
+#kunci {
+    margin-left: 30px; /* Geser lebih ke kanan */
+}
+       #koin {
+    position: relative;
+    top: 0px; /* Geser ke atas */
+}
+
+#kunci {
+    position: relative;
+    top: 150px; /* Geser ke bawah */
+}
+
+        .combination-error {
+            color: #e74c3c !important;
+            animation: text-shake 0.5s;
+        }
+
+        .combination-discovery {
+            color: #2980b9 !important;
+            animation: text-glow-blue 1s;
+        }
+
+        /* Animations */
+        @keyframes text-glow-green {
+            0% { text-shadow: 0 0 10px #27ae60; }
+            50% { text-shadow: 0 0 25px #27ae60; }
+            100% { text-shadow: none; }
+        }
+
+        @keyframes text-glow-blue {
+            0% { text-shadow: 0 0 10px #2980b9; }
+            50% { text-shadow: 0 0 25px #2980b9; }
+            100% { text-shadow: none; }
+        }
+
+        @keyframes text-shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(8px); }
+            50% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Sidebar Toggle */
+        #toggle-sidebar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 200px;
+            background-color: #2c3e50;
+            padding: 10px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: -220px;
+            transition: left 0.3s ease;
+        }
+        #sidebar.active {
+            left: 0;
+        }
+        #sidebar button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            color: white;
+            background-color: #34495e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+        }
+        #sidebar button.active {
+            background-color: #3498db;
+        }
+
+        /* Main Content */
+        #content {
+            padding: 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        #content.sidebar-active {
+            margin-left: 220px;
+        }
+
+        /* Items Grid */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .item {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: white;
+            color: black;
+            flex-direction: column;
+            font-weight: bold;
+        }
+        .selected {
+            border: 3px solid red;
+        }
+
+        /* Progress Bar */
+        #progress {
+            width: 80%;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            margin: 10px auto;
+            position: relative;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: green;
+            border-radius: 10px;
+            z-index:0;
+        }
+        #progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #fraction {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Currency Display */
+        #koin {
+            position: fixed;
+            top: 10px;
+            left: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+            z-index: 6;
+        }
+        #kunci {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+            z-index: 6;
+        }
+
+        /* Validation Messages */
+        .valid { color: green; }
+        .invalid { color: red; }
+        
+        #achievement-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.achievement {
+    color: black;
+    width: calc(90% - 10px); /* Bagi jadi 2 kolom */
+    background-color: white; /* Warna default */
+    padding: 10px;
+    align-items: center;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.achievement.completed {
+    background-color: lightgreen; /* Warna jika berhasil */
+}
+
+.achievement .icon {
+    font-size: 24px;
+}
+        /* Confirmation Dialog */
+        #confirmation {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            bottom: 5000%;
+            left: 50%;
+            transform: translate(-50%, -125%);
+            background: #2980b9;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 7;
+            text-align: center;
+            min-width: 300px;
+            font-weight: bold;
+        }
+        #confirmation button {
+            margin: 15px 10px 0;
+            padding: 0;
+            font-size: 24px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            gap: 15px;
+            flex-direction: row;
+        }
+        #confirm-btn {
+    background: #27ae60;
+    position: relative;
+    left: -50px;
+    bottom: 1px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+#confirm-btn:hover {
+    background: #1e8449;
+    opacity: 0.9;
+}
+/* Tombol silang */
+#confirmation button:last-child {
+    background: #c0392b !important;
+    position: relative;
+    left: 175px;
+    bottom: 60px;
+    color: black !important;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+#confirmation button:last-child:hover {
+    background: #a93226 !important;
+    box-shadow: 0 0 15px #a93226;    
+}
+
+        /* Audio Element */
+        audio {
+            display: none;
+        }
+        
+        /* ================ CHEST TIERS ================ */
+/* ================ SALDO POSITION ================ */
+.saldo-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 998;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+ /* Pusatkan semua kotak di dalam semua tab */
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Jika ada elemen yang berisi daftar (misalnya koleksi elemen), pusatkan juga */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Beri jarak antar elemen */
+}
+
+/* Pusatkan elemen dalam daftar */
+.element-item, .achievement-item, .shop-item, .collection-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Pastikan judul di tab tidak memiliki animasi atau efek transisi */
+#elemen h1, #element-list h1 {
+    position: static;
+    animation: none;
+    transition: none;
+}
+
+/* Matikan semua animasi dan transisi pada judul */
+#elemen h1, #element-list h1 {
+    position: relative; /* Pastikan tidak berubah posisinya */
+    animation: none !important; /* Hapus semua animasi */
+    transition: none !important; /* Hapus efek transisi */
+}
+
+/* Pastikan judul tidak memiliki animasi dan tetap di tempat */
+#elemen h1, #element-list h1 {
+    position: static !important;
+    animation: none !important;
+    transition: none !important;
+    text-align: center;
+    width: 100%;
+    margin-top: 0;
+    padding: 10px 0;
+}
+
+/* Tambahkan padding atas agar konten tidak tertutup */
+#elemen, #element-list {
+    padding-top: 60px;
+}
+
+#reset {
+    padding-top: 80px; /* Tambahkan jarak dari atas */
+    text-align: center; /* Pastikan teks dan tombol tetap di tengah */
+}
+
+#reset button {
+    margin-top: 20px; /* Beri jarak tambahan antara teks dan tombol */
+}
+#toko-items {
+    justify-content: center;
+    padding: 0px;
+}
+
+#toko-items .item {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin: 3px;
+    transition: transform 0.3s;
+}
+
+#toko-items .item:hover {
+    transform: scale(1.05);
+}
+
+/* Pusatkan Pencapaian */
+#achievement-container {
+    justify-content: center;
+    padding: 0px;
+}
+
+.achievement {
+    width: 300px;
+    margin: 0px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Pusatkan Koleksi Langka */
+#koleksi-items > div {
+    width: 100%;
+    justify-content: center;
+}
+
+.Langka-grid {
+    justify-content: center;
+    padding: 0px;
+}
+
+/* Perbaikan Layout Umum */
+.container {
+    justify-content: center;
+    padding: 20px;
+}
+
+#toko-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Jarak antar item */
+}
+
+#toko-items .item {
+    width: 80px !important;  /* Paksa lebarnya menjadi 80px */
+    height: 80px !important; /* Samakan tinggi agar kotak */
+    padding: 0;
+    border-radius: 10px;
+    text-align: center;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Mencegah elemen dalamnya membuat kotak melebar */
+    white-space: nowrap; /* Cegah teks dalamnya membesar */
+}
+* {
+    min-width: 0 !important;
+    max-width: none !important;
+}
+
+#koleksi {
+    display: flex;
+    flex-wrap: wrap;
+    /* properti lainnya */
+}
+
+.koleksi-item {
+    /* properti untuk item */
+}
+
+/* CSS */
+.collection-container {
+    position: relative; /* Anchor untuk background absolut */
+    min-height: 500px; /* Sesuaikan dengan kebutuhan */
+    padding: 20px;
+}
+
+.collection-background {
+    position: absolute;
+    top: 10px; /* Atur posisi vertikal */
+    left: -10px; /* Atur posisi horizontal */
+    width: 10px; /* Atur lebar */
+    height: calc(100%); /* Sesuaikan dengan padding */
+    background: lightgreen; /* Warna hijau transparan */
+    border: 3px solid yellow;
+    border-radius: 30px;
+    z-index: 0; /* Di belakang konten */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    
+    /* Membuat bisa diatur via JS */
+    transform: translate(var(--pos-x, 0), var(--pos-y, 0));
+    width: var(--bg-width, 98.75%);
+    height: var(--bg-height, 2000px);
+}
+
+#koleksi-items {
+    position: relative;
+    z-index: 1; /* Pastikan konten di atas background */
+}
+
+/* Pastikan tab tidak tertutup */
+#sidebar {
+    z-index: 999; /* Tab harus paling atas */
+}
+
+.tab-content {
+    margin-top: 60px; /* Beri jarak untuk tab */
+}
+.collection-background:nth-child(1) {}
+    position: absolute;
+    top: 120px; /* Bisa diubah sesuai kebutuhan */
+    left: 22.5px;
+    width: 375px;
+    height: 320px;
+    background: lightgreen;
+    z-index: 1; /* Pastikan di belakang item koleksi */
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    border-radius: 30px;
+}
+
+.collection-background:nth-child(2) {
+    position: absolute;
+    top: 500px; /* Atur posisi agar tidak menumpuk */
+    left: 50px;
+    width: 400px;
+    height: 350px;
+    background: lightgreen;
+    z-index: 1;
+    border: 3px solid yellow;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    border-radius: 30px;
+}
+/* Chatbox Biru */
+#chatbox {
+    position: fixed;
+    top: 0;
+    z-index: 5; /* Lebih tinggi dari background */
+    /* ... properti lain tetap ... */
+}
+
+/* Progress Bar */
+#progress {
+    position: relative;
+    z-index: 4; /* Pastikan di atas background hijau */
+}
+
+/* Sidebar & Tombol Tab */
+#sidebar {
+    z-index: 7;
+}
+#toggle-sidebar {
+    z-index: 8; /* Paling atas */
+}
+.koleksi-item {
+    position: absolute; /* Agar bisa diatur posisinya */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Item dalam kategori */
+.Biasa-grid .item {
+    width: 100px;
+    height: 100px;
+    background: white;
+    border-radius: 17.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid black;
+}
+.Langka-grid .item {
+    width: 0px;
+    height: 0px;
+    background: white;
+    border-radius: 17.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid #3498db;
+}
+.Epik-grid .item {
+    width: 95px;
+    height: 95px;
+    background: white;
+    border-radius: 17.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid #c78be0;    
+}
+.Legendaris-grid .item {
+    width: 95px;
+    height: 95px;
+    background: white;
+    border-radius: 17.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid #f6ff73;    
+}
+.Mitos-grid .item {
+    width: 95px;
+    height: 95px;
+    background: white;
+    border-radius: 17.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid #e74c3c;
+}
+
+/* Placeholder */
+.Biasa-grid .item span,
+.Langka-grid .item span,
+.Epik-grid .item span,
+.Legendaris-grid .item span,
+.Mitos-grid .item span {
+    width: 100% !important;
+    height: 1000% !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em !important;
+    border-radius: 15px !important;
+}
+
+.koleksi-item {
+    position: relative;
+    z-index: 5; /* Lebih rendah dari tulisan, tapi tetap di atas background */
+}
+
+.collection-background {
+    position: absolute;
+    z-index: 1; /* Paling bawah */
+}
+
+</style>
+<style>
+/* Kategori Toko */
+.toko-category {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 2px solid #3498db;
+}
+
+.toko-category h2 {
+    color: #2c3e50 !important;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.toko-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom */
+    gap: 15px;
+}
+
+/* Item Toko */
+.toko-item {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    border: 2px solid #3498db;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Khusus Peti */
+.toko-item[data-type="chest"] {
+    background: linear-gradient(45deg, #cd7f32, #8a5a2f);
+    border-color: #ffd700;
+}
+
+/* Khusus Kunci */
+.toko-item[data-type="kunci"] {
+    background: linear-gradient(45deg, #f1c40f, #e67e22);
+    border-color: #2ecc71;
+}
+
+.emoji-large {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.item-price {
+    font-weight: bold;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.1);
+    padding: 5px;
+    border-radius: 5px;
+}
+<style>
+/* Ukuran Kotak */
+.toko-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Lebih sempit */
+    gap: 10px;
+}
+
+.toko-item {
+    width: 80px !important; /* Ukuran tetap */
+    padding: 10px !important;
+    min-height: 100px !important;
+}
+
+/* Ukuran Emoji */
+.emoji-large {
+    font-size: 1.8em !important;
+}
+
+/* Ukuran Teks */
+.toko-item div:nth-child(2) {
+    font-size: 14px !important;
+    margin: 5px 0 !important;
+}
+
+/* Khusus untuk Peti */
+.toko-item[data-type="chest"] {
+    background: linear-gradient(45deg, #cd7f32, #8a5a2f) !important;
+    border: 2px solid #ffd700 !important;
+}
+</style>
+</style>
+<style>
+/* Tambahkan di bagian CSS */
+.toko-item[data-type="kunci"] {
+    background: linear-gradient(45deg, #2ecc71, #27ae60) !important;
+    border-color: #2c3e50 !important;
+}
+
+.toko-item[data-type="kunci"] .item-price {
+    color: white !important;
+    background: rgba(0,0,0,0.3);
+}
+</style>
+<style>
+/* 1. Background Kuning dengan Gradien */
+.toko-item {
+    background: linear-gradient(135deg, #ffd700 0%, #fff3b0 100%) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* 2. Ukuran Kotak Lebih Kecil */
+.toko-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.toko-item {
+    width: 80px !important;
+    height: 110px !important;
+    padding: 10px !important;
+}
+
+/* 3. Tampilan Kunci yang Hilang */
+.toko-item[data-type="kunci"] {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    border: 2px solid #2c3e50 !important;
+}
+
+/* Di bagian CSS toko items */
+.toko-item div:nth-child(2) { /* Target nama item */
+    color: white !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin: 8px 0;
+}
+/* 5. Status Kepemilikan */
+.owned-badge {
+    color: #7f8c8d !important;
+    font-size: 10px !important;
+    line-height: 1.2;
+    margin-top: 5px;
+}
+.toko-category::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: 15px;
+}
+
+/* 2. Warna Background Kategori */
+.toko-category[data-category="regular"]::before {
+    background: linear-gradient(45deg, #8B4513, #A0522D) !important; /* Cokelat */
+}
+
+.toko-category[data-category="kunci"]::before {
+    background: linear-gradient(45deg, #C0C0C0, #D3D3D3) !important; /* Perak */
+}
+
+.toko-category[data-category="chest"]::before {
+    background: linear-gradient(45deg, #FFD700, #DAA520) !important; /* Emas */
+}
+</style>
+<style>
+/* 1. Background Kuning untuk Item Biasa */
+.toko-item[data-type="regular"] {
+    background: linear-gradient(45deg, #FFD700, #FFE55C) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.toko-item[data-type="regular"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.3);
+    z-index: 0;
+}
+
+.toko-item[data-type="regular"] > * {
+    position: relative;
+    z-index: 1;
+}
+</style>
+</style>
+<style>
+/* Confirmation Dialog */
+#confirmation {
+    position: fixed; /* Ubah dari relative ke fixed */
+    top: 50%; /* Posisi vertikal tengah */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Pusatkan tepat di tengah */
+    width: 300px;
+    height: 150px;
+    background: #2980b9;
+    color: black; /* Ubah warna teks ke putih */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 1; /* Pastikan di atas semua elemen */
+}
+
+/* Hapus properti bottom dan posisi aneh di tombol */
+#confirm-btn {
+    background: #27ae60;
+    color: white;
+    position: relative; /* Hapus posisi relatif */
+    top: 0px;
+    left: -50px;
+    margin: 0 10px;
+}
+
+#cancel-btn {
+    background: #c0392b !important;
+    color: black !important; /* Ubah warna teks ke putih */
+    position: static;
+    margin: 0 10px;
+}
+</style>
+<style>
+/* Warna Background Kategori */
+.toko-category[data-category="regular"] {
+    background: linear-gradient(145deg, #cd7f32, #8B4513) !important; /* Perunggu */
+}
+
+.toko-category[data-category="kunci"] {
+    background: linear-gradient(145deg, #C0C0C0, #808080) !important; /* Perak */
+}
+
+.toko-category[data-category="chest"] {
+    background: linear-gradient(145deg, #FFD700, #DAA520) !important; /* Emas */
+}
+
+/* Efek tambahan untuk item */
+.toko-item {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.toko-item[data-type="regular"] {
+    background: linear-gradient(145deg, #8B4513, #cd7f32) !important; /* Perunggu */
+    border: 2px solid #5a2d0c !important;
+}
+
+.toko-item[data-type="kunci"] {
+    background: linear-gradient(145deg, #808080, #C0C0C0) !important; /* Perak */
+    border: 2px solid #696969 !important;
+}
+
+.toko-item[data-type="chest"] {
+    background: linear-gradient(145deg, #DAA520, #FFD700) !important; /* Emas */
+    border: 2px solid #b8860b !important;
+}
+
+/* Efek hover */
+.toko-item:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+</style>
+<style>
+/* Tambahkan di bagian style */
+.toko-item div:nth-child(2) { /* Target div kedua yang berisi nama item */
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+/* Khusus untuk status "Sudah dimiliki" */
+.owned-badge {
+    color: rgba(255,255,255,0.8) !important;
+    background: rgba(0,0,0,0.3);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: normal !important;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 5px;
+}
+</style>
+<style>
+/* Notifikasi kombinasi tidak valid di pojok kanan atas */
+.top-notification {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: red;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: none;
+    z-index: 1000;
+    animation: text-shake 0.5s;
+}
+
+.combination-success, 
+.combination-error, 
+.combination-discovery {
+    font-weight: bold !important;
+}
+</style>
+<style>
+/* Modal Probabilitas Peti */
+.chest-probability-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1002;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+}
+
+.probability-content {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.probability-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.probability-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #f1c40f;
+}
+
+.probability-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.probability-item {
+    display: flex;
+    align-items: center;
+    margin: 0.8rem 0;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.probability-item:hover {
+    transform: translateX(10px);
+}
+
+.item-emoji {
+    font-size: 2em;
+    margin-right: 1rem;
+    min-width: 50px;
+    text-align: center;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+.item-probability {
+    color: #bdc3c7;
+    font-size: 0.9em;
+}
+
+.probability-bar {
+    height: 5px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.probability-fill {
+    height: 100%;
+    background: #27ae60;
+    transition: width 0.5s ease-out;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tier-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #e67e22;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    transform: rotate(5deg);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+</style>
+<style>
+.chest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.chest-content {
+    background: #2c3e50;
+    padding: 20px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 600px;
+    min-height: 400px;
+    max-width: 500px;
+    color: white;
+}
+
+.chest-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+}
+.probability-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    font-size: 1.1em;
+}
+
+.item-name {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.item-percent {
+    width: 80px;
+    text-align: right;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.buy-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.buy-button:hover {
+    background: #219a52;
+}
+</style>
+<style>
+@keyframes rewardPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.confirm-btn {
+    background: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.confirm-btn:hover {
+    background: #219a52;
+    transform: scale(1.05);
+}
+
+.cancel-btn {
+    background: #e74c3c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+<style>
+/* Modal Probabilitas Peti */
+.chest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.chest-content {
+    background: #2c3e50;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    color: white;
+    text-align: center;
+}
+
+.probability-list {
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.probability-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.btn-batal {
+    background: #e74c3c;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-beli {
+    background: #27ae60;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.divider {
+    border-top: 2px solid #3498db;
+    margin: 1rem 0;
+}
+/* Tier System */
+/* 🥉 Perunggu Tier */
+.Perunggu-tier {
+    background: linear-gradient(145deg, #cd7f32, #8c5a2b) !important;
+    border: 2px solid #cd7f32 !important;
+    box-shadow: 0 0 15px rgba(205,127,50,0.5);
+}
+
+/* 🥈 Perak Tier */
+.Perak-tier {
+    background: linear-gradient(145deg, #c0c0c0, #808080) !important;
+    border: 2px solid #c0c0c0 !important;
+    box-shadow: 0 0 15px rgba(192,192,192,0.5);
+}
+
+/* 🥇 Emas Tier */
+.Emas-tier {
+    background: linear-gradient(145deg, #ffd700, #b8860b) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 15px rgba(255,215,0,0.5);
+}
+
+/* 🏆 Eksklusif Tier */
+.Eksklusif-tier {
+    background: linear-gradient(145deg, #ff8c00, #ff4500) !important;
+    border: 2px solid #ff8c00 !important;
+    box-shadow: 0 0 15px rgba(255,140,0,0.5);
+}
+
+/* 💎 Premium Tier */
+.Premium-tier {
+    background: linear-gradient(145deg, #00bfff, #0073e6) !important;
+    border: 2px solid #0073e6 !important;
+    box-shadow: 0 0 15px rgba(0,115,230,0.5);
+}
+
+/* 🔥 Superior Tier */
+.Superior-tier {
+    background: linear-gradient(145deg, #800080, #4b0082) !important;
+    border: 2px solid #800080 !important;
+    box-shadow: 0 0 15px rgba(128,0,128,0.5);
+}
+
+/* 🌌 Dimensi Tier */
+.Dimensi-tier {
+    background: linear-gradient(145deg, #191970, #000000) !important;
+    border: 2px solid #191970 !important;
+    box-shadow: 0 0 15px rgba(25,25,112,0.5);
+}
+
+/* ⚡ Ultimate Tier */
+.Ultimate-tier {
+    background: linear-gradient(145deg, #ff1493, #8b0000) !important;
+    border: 2px solid #ff1493 !important;
+    box-shadow: 0 0 15px rgba(255,20,147,0.5);
+}
+
+/* Modal Items */
+.chest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.chest-content {
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+}
+
+.probability-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 8px 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-batal {
+    background: #e74c3c !important;
+    padding: 10px 25px;
+}
+
+.btn-beli {
+    background: #27ae60 !important;
+    padding: 10px 25px;
+}
+
+.divider {
+    border-top: 2px solid rgba(255,255,255,0.2);
+    margin: 15px 0;
+}
+</style>
+<style>
+/* Achievement Section - Fixed Version */
+#pencapaian {
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    min-height: calc(100vh - 60px);
+}
+
+.achievement-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.achievement {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.achievement.completed {
+    background: linear-gradient(45deg, #27ae60, #219a52);
+    border-color: #2ecc71;
+}
+
+.achieneyemojicontent {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.achievement-emoji {
+    font-size: 2.5em;
+    margin-right: 15px;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+}
+
+.achievement-text h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.3em;
+}
+
+.achievement-text p {
+    color: rgba(255,255,255,0.8);
+    margin: 5px 0 0 0;
+    font-size: 0.9em;
+}
+
+.progress-container {
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 0;
+    transition: width 0.5s ease-out;
+}
+
+.achievement-stats {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9em;
+}
+
+.achievement-reward {
+    background: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin-top: 15px;
+    display: inline-block;
+    border: 1px solid #f1c40f;
+}
+
+/* Glow effect for completed */
+.achievement.completed::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+    opacity: 0;
+    animation: achievement-glow 2s infinite;
+}
+
+@keyframes achievement-glow {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
+<style>
+/* Achievement Section - Final Fix */
+#pencapaian {
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.achievement-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.achievement-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.achievement-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.achievement-icon {
+    font-size: 2.5em;
+    margin-right: 15px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-content {
+    flex: 1;
+}
+
+.achievement-title {
+    color: #fff;
+    margin: 0 0 5px 0;
+    font-size: 1.2em;
+}
+
+.achievement-description {
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.achievement-stats {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.achievement-reward {
+    background: rgba(241, 196, 15, 0.15);
+    color: #f1c40f;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+/* Completed State */
+.achievement-card.completed {
+    background: linear-gradient(45deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.25));
+    border-color: #2ecc71;
+}
+
+.achievement-card.completed .progress-bar {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+</style>
+<style>
+        /* Animasi baru */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .item:hover {
+            animation: float 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        /* Efek glow untuk elemen Langka */
+        .Premium-tier {
+            animation: glow-Premium 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-Premium {
+            0% { box-shadow: 0 0 10px #8A2BE2; }
+            50% { box-shadow: 0 0 30px #DA70D6; }
+            100% { box-shadow: 0 0 10px #8A2BE2; }
+        }
+
+        /* Notifikasi modern */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+<style>
+/* CSS Achievements */
+.achievement-card {
+    background: linear-gradient(145deg, #2c3e50, #34495e);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid #3498db;
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+}
+
+.achievement-card.completed {
+    border-color: #2ecc71;
+}
+
+.achievement-card.completed::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(46, 204, 113, 0.1), transparent);
+}
+
+.achievement-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.achievement-icon {
+    font-size: 2em;
+    margin-right: 15px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.achievement-progress {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.achievement-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    transition: width 0.5s ease;
+}
+
+.claim-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    float: right;
+}
+
+.claim-button:hover {
+    background: #219a52;
+    transform: scale(1.05);
+}
+
+.achievement-reward {
+    color: #f1c40f;
+    font-size: 0.9em;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.claimed-badge {
+    color: #2ecc71;
+    font-size: 0.8em;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: rgba(46, 204, 113, 0.15);
+}
+</style>
+<style>
+/* Achievement Container */
+.achievement-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Achievement Card */
+.achievement-card {
+    background: linear-gradient(145deg, #2c3e50, #34495e);
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    border: 2px solid #3498db7d;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Completed State */
+.achievement-card.completed {
+    border-color: #2ecc71;
+    background: linear-gradient(145deg, #27ae6050, #219a5250);
+}
+
+.achievement-card.completed::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent 20%, 
+        rgba(46, 204, 113, 0.1) 50%, 
+        transparent 80%);
+    animation: achievement-glow 3s infinite;
+}
+
+@keyframes achievement-glow {
+    0% { transform: rotate(0deg) translate(-50%, -50%); }
+    100% { transform: rotate(360deg) translate(-50%, -50%); }
+}
+
+/* Progress Bar */
+.progress-container {
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    transition: width 0.5s ease;
+}
+
+/* Reward Section */
+.reward-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.reward-info {
+    color: #f1c40f;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.claim-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.claim-button:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.claim-button:hover:not(:disabled) {
+    background: #219a52;
+    transform: scale(1.05);
+}
+
+.claimed-badge {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.15);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+</style>
+
+<style>
+.achievement-card {
+    pointer-events: none; /* Mencegah kotak pencapaian menangkap klik */
+    user-select: none;
+}
+.claim-button {
+    pointer-events: auto; /* Memastikan tombol klaim tetap bisa ditekan */
+    cursor: pointer;
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+.claim-button:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+}
+.claim-button:hover:not(:disabled) {
+    background: #219a52;
+    transform: scale(1.05);
+}
+/* Pencapaian belum selesai */
+.achievement-card {
+    background: gray !important;
+    border: 2px solid #7f8c8d !important;
+}
+
+/* Pencapaian selesai tapi belum diklaim */
+.achievement-card.completed:not(.claimed) {
+    background: linear-gradient(145deg, #8A2BE2, #3498db) !important;
+    border: 2px solid #DA70D6 !important;
+    box-shadow: 0 0 15px rgba(138,43,226,0.5);
+}
+
+/* Sudah diklaim */
+.achievement-card.claimed {
+    background: linear-gradient(145deg, #27ae60, #219a52) !important;
+    border-color: #2ecc71 !important;
+}
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: bold;
+    animation: slideUp 0.5s ease-out;
+    z-index: 1000;
+}
+
+@keyframes slideUp {
+    from { bottom: -50px; opacity: 0; }
+    to { bottom: 20px; opacity: 1; }
+}
+/* Tambahkan di CSS */
+.Biasa-grid .unknown {
+    background: white !important;
+    border: 0px solid black !important;
+    color: black !important;
+    gap: 5px;
+}
+
+.Langka-grid .unknown {
+    background: #3498db !important;
+    border: 0px solid #3498db !important;
+    color: white !important;
+}
+
+.Epik-grid .unknown {
+    background: #c78be0 !important;
+    border: 2px solid ##c78be0 !important;
+    color: white !important;
+}
+
+.Legendaris-grid .unknown {
+    background: #f6ff73 !important;
+    border: 2px solid #f6ff73 !important;
+    color: black !important;
+}
+.Mitos-grid .unknown {
+    background: #e74c3c !important;
+    border: 2px solid #e74c3c !important;
+    color: white !important;
+}
+
+
+/* Pastikan container koleksi */
+#koleksi-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Pusatkan grid secara horizontal */
+    width: 350px;
+}
+</style>
+<!-- Di dalam style -->
+<style>
+/* Tambahkan class untuk placeholder */
+.unknown {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Atur grid koleksi */
+.Biasa-grid,
+.Langka-grid,
+.Epik-grid,
+.Legendaris-grid,
+.Mitos-grid {
+    display: grid;
+    position: relative;
+    top: 0px;
+    left: -17.5px;
+    grid-template-columns: repeat(auto-fit, minmax(var(--item-size), 1fr));
+    gap:15px;
+    width: 350px;
+    max-width: 800px;
+    margin: 0 auto;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+/* Ukuran default */
+:root {
+    --item-size: 75px;
+}
+
+.Biasa-grid .item,
+.Langka-grid .item,
+.Epik-grid .item,
+.Legendaris-grid .item,
+.Mitos-grid .item {
+    width: var(--item-size);
+    height: var(--item-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Biasa-grid,
+.Langka-grid,
+.Epik-grid,
+.Legendaris-grid,
+.Mitos-grid {
+    --item-size: 75px;
+</style>
+<style>
+/* Tambahkan di bagian CSS */
+#koleksi-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.koleksi-category {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    justify-content: center;
+    padding: 15px;
+}
+
+.unknown {
+    background: #ffffff;
+    width: 1000px;
+    height: 100px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+</style>
+<style>
+/* Tambahkan di bagian CSS */
+
+/* 1. Mengatur posisi grid Epik dan Legendaris */
+.Epik-grid,
+.Legendaris-grid,
+.Mitos-grid {
+    left: 0 !important; /* Hapus offset kiri */
+    justify-content: center; /* Pastikan item di tengah */
+    margin: 0 auto; /* Pusatkan grid */
+}
+
+/* 2. Mengatur judul kategori koleksi */
+.koleksi-category h2 {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 10px 0 !important;
+}
+
+/* Pastikan ukuran grid sesuai */
+.Biasa-grid,
+.Langka-grid,
+.Epik-grid,
+.Legendaris-grid {
+    width: 350px !important;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.Mitos-grid {
+    width: 167.5px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+</style>
+<style>
+/* CSS untuk judul koleksi */
+#koleksi h1,
+#koleksi h2 {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    position: static !important;
+    transform: none !important;
+}
+
+/* Untuk semua judul kategori */
+#koleksi .koleksi-category > h2,
+#koleksi .Biasa-grid ~ h2,
+#koleksi .Langka-grid ~ h2,
+#koleksi .Epik-grid ~ h2,
+#koleksi .Legendaris-grid ~ h2, 
+#koleksi .Mitos-grid ~ h2 {
+    display: block !important;
+    text-align: center !important;
+    margin: 20px auto !important;
+    padding: 10px 0 !important;
+    left: -100px !important;
+    right: 0 !important;
+}
+
+/* Reset positioning untuk container */
+#koleksi .collection-container {
+    position: relative !important;
+    text-align: center !important;
+}
+
+/* Penyesuaian grid */
+.Biasa-grid,
+.Langka-grid,
+.Epik-grid,
+.Legendaris-grid,
+.Mitos-grid {
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 auto !important;
+    justify-content: center !important;
+    padding-left: 0 !important;
+    transform: none !important;
+}
+
+/* Penyesuaian khusus untuk grid Langka dan Legendaris */
+.Langka-grid,
+.Epik-grid,
+.Legendaris-grid,
+.Mitos-grid {
+    margin-top: 20px !important;
+    padding: 15px 0 !important;
+}
+
+/* Penyesuaian tambahan untuk placeholder */
+.Legendaris-grid .unknown {
+    margin: 0 auto !important;
+    float: none !important;
+}
+.Mitos-grid .unknown {
+    margin: 0 auto !important;
+    float: none !important;
+}
+</style>
+<style>
+/* Penyesuaian judul koleksi */
+#koleksi h1 {
+    text-align: center !important;
+    position: relative !important;
+    left: -42.5px !important; /* Geser 20px ke kiri dari posisi tengah */
+    margin: 0 auto !important;
+    width: calc(100% + 40px) !important; /* Kompensasi pergeseran */
+    padding: 10px 0 !important;
+    transform: translateX(10px) !important; /* Fine tuning posisi */
+    text-shadow: 1px 1px 5px black;
+}
+
+#koleksi h2 {
+    text-align: center !important;
+    position: relative !important;
+    left: -30px !important; /* Geser 20px ke kiri dari posisi tengah */
+    margin: 0 auto !important;
+    width: calc(100% + 40px) !important; /* Kompensasi pergeseran */
+    padding: 10px 0 !important;
+    transform: translateX(10px) !important; /* Fine tuning posisi */
+    text-shadow: 1px 1px 5px black;
+}
+
+/* Penyesuaian khusus untuk kategori */
+#koleksi .koleksi-category > h2 {
+    left: -20px !important; /* Adjust sesuai kebutuhan */
+    transform: translateX(7px) !important;
+    margin-left: -10px !important;
+}
+
+/* Penyesuaian grid container */
+#koleksi-items {
+    margin-left: -32px !important; /* Kompensasi pergeseran judul */
+    padding-right: 0px !important;
+}
+
+/* Penyesuaian tambahan untuk alignment */
+.collection-container {
+    margin-left: 20px !important; /* Geser seluruh konten ke kiri */
+    padding-right: 20px !important;
+}
+</style>
+<style>
+/* CSS untuk Modal Informasi */
+.collection-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.collection-modal-content {
+    background: #e0f3ff; /* Biru muda */
+    padding: 25px;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    border: 3px solid #87CEEB; /* Biru cerah */
+}
+
+.modal-header {
+    text-align: center;
+    color: black;
+    margin-bottom: 15px;
+}
+
+.item-emoji {
+    font-size: 3em;
+    margin: 10px 0;
+}
+
+.item-status {
+    background: white !important;
+    padding: 8px 15px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+}
+
+.owned { color: #27ae60 !important; border: 2px solid #27ae60; }
+.unowned { color: #e74c3c !important; border: 2px solid #e74c3c; }
+
+.item-source {
+    background: black;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 15px 0;
+    font-size: 0.9em;
+    color: #000000;
+}
+
+.item-description {
+    font-style: italic;
+    margin: 15px 0;
+    color: #333;
+}
+/* Style untuk modal koleksi */
+.collection-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.collection-modal-content {
+    background: #e0f3ff;
+    padding: 25px;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    border: 3px solid #87CEEB;
+}
+
+.item-status {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+    display: inline-block;
+}
+
+.owned {
+    background: #90EE90;
+    color: #006400;
+    border: 2px solid #006400;
+}
+
+.unowned {
+    background: #FFB6C1;
+    color: #8B0000;
+    border: 2px solid #8B0000;
+}
+
+.item-source {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+.item-description {
+    font-style: italic;
+    margin: 15px 0;
+    color: #333;
+}
+
+/* Style untuk grid koleksi */
+.koleksi-category {
+    margin-bottom: 30px;
+}
+
+.koleksi-category h2 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 15px;
+}
+</style>
+<style>
+.gacha-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    color: #2c3e50;
+    border: 2.5px solid black;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    z-index: 1001;
+    text-align: center;
+    display: none;
+    max-width: 300px;
+    width: 300px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+}
+
+.gacha-modal-content {
+    padding: 15px;
+}
+
+.gacha-modal-emoji {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.gacha-modal-text {
+    font-size: 1em;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.gacha-modal-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 15px;
+}
+</style>
+</head>
+<body>
+    <div class="collection-modal" id="collectionModal">
+    <div class="collection-modal-content">
+        <div class="modal-header">
+            <div class="item-emoji" id="modalEmoji"></div>
+            <h2 id="modalItemName"></h2>
+            <div class="item-status" id="modalItemStatus"></div>
+        </div>
+        
+        <div class="item-source">
+            <strong>📦 Sumber:</strong><br>
+            <span id="modalItemSource"></span>
+        </div>
+        
+        <div class="item-description">
+            <strong>📖 Deskripsi:</strong><br>
+            <span id="modalItemDesc"></span>
+        </div>
+        
+        <button onclick="closeCollectionModal()" 
+                style="background: #87CEEB; padding: 8px 20px; border: none; border-radius: 15px;">
+            Tutup
+        </button>
+    </div>
+</div>
+    <!-- Chatbox HTML di atas layar -->
+<div id="chatbox" style="position: fixed; top: 0; width: 100%; background-color: #004085; padding: 10px; border-bottom: 2px solid #ccc; height: 4vh; overflow-y: auto;">
+    <!-- Isi chatbox bisa ditambahkan di sini -->
+</div>
+<!-- Di bagian body -->
+<div id="chatbox" style="position: fixed; top: 0; ..."></div> <!-- Tetap untuk notifikasi sistem -->
+
+    <div id="toggle-sidebar" onclick="toggleSidebar()">☰</div>
+<div id="sidebar">
+    <button id="tab-elemen" class="active" onclick="showTab('elemen')">Gabungkan Elemen 🧪</button>
+    <button id="tab-element-list" onclick="showTab('element-list')">Elemen 🔬</button>
+    <button id="tab-koleksi" onclick="showTab('koleksi')">Koleksi 🗂️</button>
+    <button id="tab-toko" 
+onclick="showTab('toko')">Toko 🛒</button>
+    <button id="tab-pencapaian" onclick="showTab('pencapaian')">Pencapaian 🏆</button>
+    <button id="tab-reset" onclick="showTab('reset')">Reset Game 🔄</button>
+</div>
+
+<div id="content">
+    <div id="reset" class="tab-content" style="display: none;">
+    <h1>Reset Game</h1>
+    <button onclick="resetLocalStorage()" style="background-color: red; color: white; padding: 10px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer;">
+        Reset Game
+    </button>
+</div>
+    <div id="elemen" class="tab-content">
+        <h1>Gabungkan Elemen</h1>
+        <div id="fraction">0/0</div>
+        <div id="progress">
+            <div id="progress-bar"></div>
+            <div id="progress-text">0%</div>
+        </div>
+        <div class="container" id="items"></div>
+        <div id="result"></div>
+    </div>
+</div>
+        <div class="container" id="items"></div>
+        <div id="result"></div>
+    <div id="element-list" class="tab-content" style="display: none;">
+    <h1>Daftar Elemen</h1>
+    <div class="container" id="element-container"></div>
+</div>
+    </div>
+    <!-- Di dalam body, perbaiki struktur HTML koleksi -->
+<!-- Di bagian koleksi -->
+<div id="koleksi" class="tab-content" style="display: none;">
+    <div class="collection-container">
+        <div class="collection-background"></div>
+        <div class="collection-background"></div>
+        
+        <div style="z-index: 2; position: relative; padding: 5px 10px;">
+            <h1>Koleksi</h1>
+        </div>
+        
+        <!-- HAPUS DIV DUPLIKAT INI -->
+        <!-- <div id="koleksi-items"></div> -->
+        
+        <div class="container" id="koleksi-items"></div>
+    </div>
+</div>
+    <div id="toko" class="tab-content" style="display: none;">
+        <h1>Toko</h1>
+        <div class="container" id="toko-items"></div>
+    </div>
+    <div id="pencapaian" class="tab-content" style="display: none;">
+        <h1>Pencapaian</h1>
+        <div id="achievement-container" class="achievement-container"></div>
+
+    <script>
+    function claimReward(button) {
+        button.innerText = "✅ Diklaim";
+        button.disabled = true;
+        button.classList.add("claimed-badge");
+
+        // Simpan status klaim ke localStorage agar tidak hilang saat refresh
+        const achievementName = button.getAttribute("data-achievement");
+        localStorage.setItem("claimed-" + achievementName, "true");
+
+        // Tambah koin sesuai hadiah
+        let reward = parseInt(button.getAttribute("data-reward"));
+        let currentCoins = parseInt(localStorage.getItem("coins") || "0");
+        localStorage.setItem("coins", currentCoins + reward);
+
+        // Perbarui tampilan jumlah koin
+        document.getElementById("koin").innerText = "Koin🪙: " + (currentCoins + reward);
+    }
+
+    function loadAchievements() {
+        let collectedCount = JSON.parse(localStorage.getItem("elements"))?.length || 0;
+
+        const achievements = [
+            { name: "Buat 5 Elemen", goal: 5, reward: "🪙 10 Koin" },
+            { name: "Buat 10 Elemen", goal: 10, reward: "🪙 20 Koin" },
+            { name: "Buat 20 Elemen", goal: 20, reward: "🪙 30 Koin" }
+        ];
+
+        const container = document.getElementById("achievement-container");
+        container.innerHTML = "";
+
+        achievements.forEach(ach => {
+            let completed = collectedCount >= ach.goal;
+            let claimed = localStorage.getItem("claimed-" + ach.name) === "true";
+
+            const card = document.createElement("div");
+            card.classList.add("achievement-card");
+            if (completed) card.classList.add("completed");
+
+            // Update template achievement card
+card.innerHTML = `
+    <div class="achievement-header">
+        <div class="achievement-icon">${ach.emoji}</div>
+        <div class="achievement-content">
+            <h3>${ach.name}</h3>
+            <p>${Math.min(collectedCount, ach.goal)}/${ach.goal}</p>
+        </div>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar" style="width: ${progress}%"></div>
+    </div>
+    <div class="reward-section">
+        <span>Hadiah: 🪙 ${ach.reward}</span>
+        <button ...>Klaim</button>
+    </div>
+`;
+            container.appendChild(card);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAchievements);
+    </script>
+    
+    </div>
+
+    <style>
+    /* Desain Pencapaian */
+    .achievement-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+.achievement-card.completed {
+    background: linear-gradient(135deg, #8A2BE2, #3498db) !important; /* Ungu-biru mythic */
+    border: 2px solid #DA70D6 !important;
+    box-shadow: 0 0 15px rgba(138,43,226,0.5);
+    opacity: 1;
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 10px #8A2BE2; }
+    to { box-shadow: 0 0 20px #3498db; }
+}
+    .achievement-card.completed::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, 
+            transparent 20%, 
+            rgba(46, 204, 113, 0.1) 50%, 
+            transparent 80%);
+        animation: achievement-glow 3s infinite;
+    }
+
+    @keyframes achievement-glow {
+        0% { transform: rotate(0deg) translate(-50%, -50%); }
+        100% { transform: rotate(360deg) translate(-50%, -50%); }
+    }
+
+    /* Progress Bar */
+    .progress-container {
+        height: 8px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 4px;
+        margin: 15px 0;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3498db, #2980b9);
+        transition: width 0.5s ease;
+    }
+
+    /* Reward Section */
+    .reward-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    .reward-info {
+        color: #f1c40f;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .claim-button {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .claim-button:disabled {
+        background: #7f8c8d;
+        cursor: not-allowed;
+    }
+
+    .claim-button:hover:not(:disabled) {
+        background: #219a52;
+        transform: scale(1.05);
+    }
+
+    .claimed-badge {
+        color: #2ecc71;
+        background: rgba(46, 204, 113, 0.15);
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+    </style>
+</div>
+
+<div id="saldo-container">
+    <p id="koin">Koin🪙: 0</p>
+    <p id="kunci">Kunci🔑: 0</p>
+</div>
+
+<div id="chat-box"></div>
+
+<div id="confirmation">
+    <p id="confirmation-text"></p>
+    <button id="confirm-btn" onclick="confirmPurchase(true)">✓</button>
+    <button id="cancel-btn" onclick="confirmPurchase(false)">✕</button>
+</div>
+
+<audio id="sound" src="combine.mp3"></audio>
+    <script>
+        let collectedItems = []; // Menyimpan elemen yang sudah dikumpulkan
+        let discoveredElements = JSON.parse(localStorage.getItem("elements")) || [
+    { name: "Air", emoji: "💧" },
+    { name: "Api", emoji: "🔥" },
+    { name: "Tanah", emoji: "🌱" },
+    { name: "Udara", emoji: "🌬️" }
+];
+
+const kombinasi = {
+    // Level 1: Kombinasi Dasar (6)
+    "Air+Api": { name: "Uap", emoji: "☁️🔥" },
+    "Tanah+Air": { name: "Lumpur", emoji: "🌱💧" },
+    "Udara+Api": { name: "Asap", emoji: "💨" },
+    "Tanah+Api": { name: "Lava", emoji: "🌋" },
+    "Udara+Tanah": { name: "Debu", emoji: "🌪️" },
+    "Udara+Air": { name: "Angin", emoji: "💨🌪️" },
+
+    // Level 2: Kombinasi Menengah (12)
+    "Lumpur+Api": { name: "Batu Bata", emoji: "🧱" },
+    "Debu+Air": { name: "Pasir", emoji: "🏖️" },
+    "Uap+Udara": { name: "Awan", emoji: "☁️" },
+    "Lava+Air": { name: "Batu", emoji: "🪨" },
+    "Angin+Api": { name: "Listrik", emoji: "⚡" },
+    "Pasir+Api": { name: "Kaca", emoji: "🏺" },
+    "Asap+Air": { name: "Kabut", emoji: "🌫️" },
+    "Uap+Tanah": { name: "Geyser", emoji: "🌋💧" },
+    "Debu+Api": { name: "Abu", emoji: "🕳️🔥" },
+    "Angin+Tanah": { name: "Badai Pasir", emoji: "🌪️🏜️" },
+    "Lava+Udara": { name: "Batu Apung", emoji: "🪨🔥" },
+    "Lumpur+Udara": { name: "Tanah Liat", emoji: "🏺" },
+
+    // Level 3: Kombinasi Lanjut (20)
+    "Batu+Air": { name: "Kerikil", emoji: "🪨" },
+    "Awan+Listrik": { name: "Petir", emoji: "⛈️" },
+    "Batu+Udara": { name: "Pasir Kering", emoji: "🏜️" },
+    "Listrik+Air": { name: "Es", emoji: "❄️" },
+    "Batu Bata+Batu Bata": { name: "Tembok", emoji: "🧱🧱" },
+    "Kaca+Udara": { name: "Lensa", emoji: "🔍" },
+    "Kerikil+Batu": { name: "Patung", emoji: "🗿"},
+    "Es+Lava": { name: "Obsidian", emoji: "🪨💎" },
+    "Abu+Air": { name: "Lumpur Hitam", emoji: "🌑💧" },
+    "Geyser+Api": { name: "Energi Panas", emoji: "♨️" },
+    "Tanah Liat+Api": { name: "Gerabah", emoji: "🏺🔥" },
+    "Batu Apung+Air": { name: "Sabut", emoji: "🧽" },
+    "Kabut+Udara": { name: "Embun", emoji: "💧☁️" },
+    "Badai Pasir+Air": { name: "Erosi", emoji: "🏜️💧" },
+    "Energi Panas+Udara": { name: "Panas", emoji: "🌡️" },
+    "Gerabah+Tanah": { name: "Vas", emoji: "🌸🏺" },
+    "Sabut+Api": { name: "Kawat", emoji: "🧵🔥" },
+    "Embun+Api": { name: "Air Hangat", emoji: "🛀" },
+    "Erosi+Batu": { name: "Ngarai", emoji: "⛰️" },
+    "Panas+Air": { name: "Air Mendidih", emoji: "♨️💧" },
+
+    // Level 4: Kombinasi Kompleks (30)
+    "Air+Awan": { name: "Hujan", emoji: "🌧️" },
+    "Hujan+Es": { name: "Hujan Es", emoji: "🌨️" },
+    "Es+Udara": { name: "Salju", emoji: "❄️🌬️" },
+    "Petir+Tanah": { name: "Plasma", emoji: "⚡🌱" },
+    "Tembok+Tembok": { name: "Rumah", emoji: "🏠" },
+    "Lensa+Air": { name: "Mikroskop", emoji: "🔬" },
+    "Salju+Salju": { name: "Gletser", emoji: "❄️🏔️" },
+    "Plasma+Api": { name: "Energi", emoji: "💥" },
+    "Hujan+Tanah": { name: "Tumbuhan", emoji: "🌿" },
+    "Panas+Tanah": { name: "Gurun", emoji: "🏜️" },
+    "Vas+Air": { name: "Bunga", emoji: "💐" },
+    "Kawat+Listrik": { name: "Kabel", emoji: "🔌" },
+    "Air Mendidih+Udara": { name: "Pressure", emoji: "🔼" },
+    "Ngarai+Air": { name: "Sungai", emoji: "🌊" },
+    "Tumbuhan+Api": { name: "Arang", emoji: "🪵🔥" },
+    "Gurun+Udara": { name: "Tornado", emoji: "🌪️" },
+    "Bunga+Angin": { name: "Aroma", emoji: "👃" },
+    "Kabel+Logam": { name: "Listrik Statis", emoji: "⚡🔌" },
+
+    // Level 5: Kombinasi Modern (25)
+    "Energi+Udara": { name: "Pesawat", emoji: "✈️" },
+    "Mikroskop+Batu": { name: "Logam", emoji: "🏗️" },
+    "Rumah+Logam": { name: "Gedung", emoji: "🏢" },
+    "Logam+Listrik": { name: "Robot", emoji: "🤖" },
+    "Pesawat+Energi": { name: "Roket", emoji: "🚀" },
+    "Robot+Udara": { name: "Drone", emoji: "🛸" },
+    "Arang+Tanah": { name: "Pupuk", emoji: "🌱🪵" },
+    "Tornado+Air": { name: "Badai", emoji: "⛈️" },
+    "Aroma+Bunga": { name: "Parfum", emoji: "🌸" },
+    "Pressure+Udara": { name: "Kompresor", emoji: "🎚️" },
+    "Sungai+Tanah": { name: "Delta", emoji: "🜖" },
+    "Pupuk+Tumbuhan": { name: "Sayuran", emoji: "🥦" },
+    "Badai+Listrik": { name: "Supercell", emoji: "🌩️" },
+    "Parfum+Air": { name: "Minyak Wangi", emoji: "💧🌸" },
+    "Kompresor+Udara": { name: "Angin Bertekanan", emoji: "💨🎚️" },
+
+    // Level 6: Kombinasi Luar Angkasa (20)
+    "Pasir+Kaca": { name: "Waktu", emoji: "⏳" },
+    "Roket+Udara": { name: "Satelit", emoji: "🛰️" },
+    "Satelit+Satelit": { name: "Stasiun Luar Angkasa", emoji: "🛰️🛰️" },
+    "Gletser+Waktu": { name: "Gunung Es", emoji: "🏔️❄️" },
+    "Drone+Logam": { name: "AI", emoji: "🧠" },
+    "Stasiun Luar Angkasa+AI": { name: "Cyberspace", emoji: "💻🌐" },
+    "Logam+Batu": { name: "Baja", emoji: "🔩🔥" },
+    "Supercell+Air": { name: "Hurricane", emoji: "🌀" },
+    "Minyak Wangi+Api": { name: "Lilin", emoji: "🕯️" },
+    "Angin Bertekanan+Air": { name: "Jetstream", emoji: "✈️💨" },
+    "Delta+Tanah": { name: "Ekosisitem", emoji: "🌍" },
+    "Baja+Elektromagnet": { name: "Magnet", emoji: "🧲" },
+    "Hurricane+Udara": { name: "Typhoon", emoji: "🌀🌪️" },
+    "Lilin+Udara": { name: "Oksigen", emoji: "💨🕯️" },
+    "Jetstream+Logam": { name: "Pesawat Supersonik", emoji: "✈️💨" },
+    "Ekosisitem+Tumbuhan": { name: "Biosfer", emoji: "🌏💧" },
+
+    // Level 7: Kombinasi Futuristik (7)
+    "Magnet+Listrik": { name: "Generator", emoji: "⚡🔋" },
+    "Typhoon+Energi": { name: "Energi Hijau", emoji: "🌱⚡" },
+    "Oksigen+Api": { name: "Ozon", emoji: "🛡️" },
+    "Pesawat Supersonik+AI": { name: "Auto-Pilot", emoji: "🤖✈️" },
+    "Biosfer+Tanah": { name: "Terraform", emoji: "🪐" },
+    "Generator+Listrik": { name: "Radiasi", emoji: "☢☣"},
+    "Generator+Radiasi": { name: "Reaktor Nuklir", emoji: "☢️" },
+    "Terraform+Waktu": { name: "Planet", emoji: "🪐⏳" },
+    
+    // Level 8: Kombinasi Advanced (30)
+    "Kaca+Logam": { name: "Kaca Pengaman", emoji: "🔒🔍" },
+    "Baja+Listrik": { name: "Elektromagnet", emoji: "🧲⚡" },
+    "Mikroskop+Listrik": { name: "Mikroskop Elektron", emoji: "🔬⚡" },
+    "Tumbuhan+Udara": { name: "Oksigen Murni", emoji: "🌿💨" },
+    "Gedung+Kaca": { name: "Pencakar Langit", emoji: "🏙️" },
+    "Robot+AI": { name: "Android", emoji: "🤖🧠" },
+    "Es+Pressure": { name: "Es Kering", emoji: "❄️🎚️" },
+    "Sungai+Batu": { name: "Air Terjun", emoji: "🌊⛰️" },
+    "Angin+Turbin": { name: "Pembangkit Angin", emoji: "🌪️⚡" },
+    "Obsidian+Api": { name: "Pisau Obsidian", emoji: "🗡️🪨" },
+    "Lumpur+Tumbuhan": { name: "Rawa", emoji: "🌾💧" },
+    "Petir+Logam": { name: "Penangkal Petir", emoji: "⚡🏗️" },
+    "Satelit+Roket": { name: "Peluncur Satelit", emoji: "🛰️🚀" },
+    "Bunga+Udara": { name: "Serbuk Sari", emoji: "🌸💨" },
+    "Energi+Generator": { name: "Pembangkit Listrik", emoji: "⚡🏭" },
+    "Kompresor+Udara": { name: "Udara Bertekanan", emoji: "💨🎚️" },
+    "Gurun+Air": { name: "Oasis", emoji: "🏜️💧" },
+    "Logam+Panas": { name: "Cairan Logam", emoji: "🔥🏗️" },
+    "Parfum+Api": { name: "Aromaterapi", emoji: "🌸🔥" },
+    "Biosfer+Air": { name: "Ekosistem Air", emoji: "🌊🌿" },
+
+    // Level 9: Teknologi Modern (25)
+    "Planet+Waktu": { name: "Gravitasi", emoji: "🌀" },
+    "Planet+Udara": { name: "Ruang", emoji: "⬜" },
+    "Ruang+Waktu": { name: "4 Dimensi", emoji: "⏳🌌 " },
+    "Drone+Kamera": { name: "Drone Pengintai", emoji: "🛸📷" },
+    "AI+Cyberspace": { name: "Neural Network", emoji: "🧠🌐" },
+    "Pesawat+Auto-Pilot": { name: "Pesawat Otomatis", emoji: "✈️🤖" },
+    "Energi+Air": { name: "Sel Bahan Bakar", emoji: "⚡💧" },
+    "Reaktor+Air": { name: "PLTN", emoji: "☢️💧" },
+    "Baja+Magnet": { name: "Maglev", emoji: "🧲🚄" },
+    "Robot+Logam": { name: "Robot Industri", emoji: "🏗️🤖" },
+    "Kabel+Optik": { name: "Fiber Optik", emoji: "🔌🌈" },
+    "Listrik+Pressure": { name: "Laser", emoji: "🔦⚡" },
+    "Solar Panel+Sun": { name: "Energi Surya", emoji: "☀️⚡" },
+
+    // Level 10: Ekosistem Kompleks (20)
+    "Tanah Subur+Tumbuhan": { name: "Perkebunan", emoji: "🌾🌱" },
+    "Oksigen+Api": { name: "Pembakaran", emoji: "💨🔥" },
+    "Biosfer+Udara": { name: "Atmosfer", emoji: "🌍💨" },
+    "Ekosisitem+Air": { name: "Biosfer Marinir", emoji: "🐠🌊" },
+    "Hutan+Air": { name: "Hutan Hujan", emoji: "🌳🌧️" },
+    "Terumbu+Karang": { name: "Ekosistem Karang", emoji: "🐚🌊" },
+
+    // Level 11: Teknologi Quantum (15)
+    "AI+Android": { name: "Quantum", emoji: "⚛️" },
+    "AI+Quantum": { name: "Quantum AI", emoji: "🧠⚛️" },
+    "Energi+Quantum": { name: "Energi Zero-Point", emoji: "⚡⚛️" },
+    "Cyberspace+Quantum": { name: "Metaverse", emoji: "🌐⚛️" },
+    "Satelit+Quantum": { name: "Komunikasi Quantum", emoji: "🛰️⚛️" },
+
+    // Level 12: Kosmik (10)
+    "Planet+Energi": { name: "Bintang", emoji: "🪙🌟" },
+    "Gravitasi+4 Dimensi": { name: "Black Hole", emoji: "🕳️🌌" },
+    "Bintang+Debu": { name: "Nebula", emoji: "🌌✨" },
+    "Black Hole+Energi": { name: "Wormhole", emoji: "🕳️🌀" },
+    "Bintang+Nebula": { name: "Galaksi", emoji: "🌌" },
+    "Black Hole+Bintang": { name: "Spagetifikasi", emoji: "🌀🌌" },
+    "Galaksi+AI": { name: "Peradaban Tingkat III", emoji: "🌌🧠" }
+};    
+
+// Hapus elemen awal yang tidak diperlukan dari localStorage
+localStorage.setItem("elements", JSON.stringify(discoveredElements.filter(e => 
+    ["Air", "Api", "Tanah", "Udara"].includes(e.name)
+)));
+// Ubah inisialisasi koin
+// Ubah inisialisasi koin dari 1000 menjadi 0
+let koin = parseInt(localStorage.getItem("koin")) || 100000;
+        let kunci = parseInt(localStorage.getItem("kunci")) || 0;
+        let koleksi = JSON.parse(localStorage.getItem("koleksi")) || [];
+        let itemToBuy = null;
+        const tokoItems = [
+    // ==================== BARANG Biasa ====================
+    { 
+        name: "Emas", 
+        emoji: "🪙", 
+        harga: 20, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Piala", 
+        emoji: "🏆", 
+        harga: 50, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Lampu", 
+        emoji: "💡", 
+        harga: 20, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Berlian", 
+        emoji: "💎", 
+        harga: 100, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    { 
+        name: "Bintang", 
+        emoji: "⭐", 
+        harga: 40, 
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {   
+        name: "Jam Pasir",
+        emoji: "⏳",
+        harga: 40,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Jam",
+        emoji: "⌚",
+        harga: 50,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Buku",
+        emoji: "📖",
+        harga: 30,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Payung",
+        emoji: "☂️",
+        harga: 20,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Kamera",
+        emoji: "📷",
+        harga: 50,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Sepatu",
+        emoji: "👟",
+        harga: 40,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+    {
+        name: "Kacamata",
+        emoji: "🕶️",
+        harga: 20,
+        menggunakanKoin: true,
+        type: "regular"
+    },
+
+    // ==================== PETI MYSTERI ====================
+    // 🔹 Tier Perunggu  
+{
+    name: "Peti Perunggu",
+    emoji: "🎁🥉",
+    type: "chest",
+    harga: 10,
+    tier: "Perunggu",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Cincin Berlian", emoji: "💍", probabilitas: 20 },  
+        { name: "Medali Emas", emoji: "🥇", probabilitas: 20 },  
+        { name: "Robot", emoji: "🤖", probabilitas: 20 },  
+        { name: "Ametis", emoji: "💎🔮", probabilitas: 15 },  
+        { name: "Buku Rahasia", emoji: "📖✨", probabilitas: 15 },  
+        { name: "Mahkota Emas", emoji: "👑🌟", probabilitas: 10 }  
+    ]
+},
+
+// 🔹 Tier Perak  
+{
+    name: "Peti Perak",
+    emoji: "🎁🥈",
+    type: "chest",
+    harga: 15,
+    tier: "Perak",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Planet", emoji: "🪐", probabilitas: 30 },  
+        { name: "Alien", emoji: "👽", probabilitas: 25 },  
+        { name: "Kristal Es", emoji: "❄️💎", probabilitas: 20 },  
+        { name: "Batu Meteor", emoji: "🪨☄️", probabilitas: 15 },  
+        { name: "Pesawat", emoji: "✈️", probabilitas: 7 },  
+        { name: "Komet", emoji: "💫", probabilitas: 3 }  
+    ]
+},
+
+// 🟡 Tier Emas  
+{
+    name: "Peti Emas",
+    emoji: "🎁🥇",
+    type: "chest",
+    harga: 20,
+    tier: "Emas",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Roket", emoji: "🚀", probabilitas: 35 },  
+        { name: "UFO", emoji: "🛸", probabilitas: 30 },  
+        { name: "Robot Super", emoji: "🤖⚡", probabilitas: 20 },  
+        { name: "Kastil Eterna", emoji: "🏰♾️", probabilitas: 10 },  
+        { name: "Pedang Excalibur", emoji: "⚔️✨", probabilitas: 5 }  
+    ]
+},
+
+// 🏆 Tier Eksklusif  
+{
+    name: "Peti Eksklusif",
+    emoji: "🎁🏆",
+    type: "chest",
+    harga: 25,
+    tier: "Eksklusif",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Roket", emoji: "🚀", probabilitas: 30 },  
+        { name: "Pedang Excalibur", emoji: "⚔️✨", probabilitas: 28 },  
+        { name: "Kastil Eterna", emoji: "🏰♾️", probabilitas: 28 },  
+        { name: "Galaksi", emoji: "🌌", probabilitas: 7 },  
+        { name: "Lubang Cacing", emoji: "🕳️✨", probabilitas: 7 }  
+    ]
+},
+
+// 💎 Tier Premium  
+{
+    name: "Peti Premium",
+    emoji: "🎁💎",
+    type: "chest",
+    harga: 40,
+    tier: "Premium",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Kristal Es", emoji: "❄️💎", probabilitas: 25 },  
+        { name: "Lubang Cacing", emoji: "🕳️✨", probabilitas: 20 },  
+        { name: "Teleporter", emoji: "🌌⚡", probabilitas: 20 },  
+        { name: "Chronos Aeternus", emoji: "⏳♾️", probabilitas: 15 },  
+        { name: "Galaksi", emoji: "🌌", probabilitas: 15 },  
+        { name: "Alam Semesta", emoji: "🌌⭐", probabilitas: 5 }  
+    ]
+},
+
+// 🔥 Tier Superior  
+{
+    name: "Peti Superior",
+    emoji: "🎁🔥",
+    type: "chest",
+    harga: 100,
+    tier: "Superior",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Lubang Cacing", emoji: "🕳️✨", probabilitas: 35 },  
+        { name: "Teleporter", emoji: "🌌⚡", probabilitas: 25 },  
+        { name: "Chronos Aeternus", emoji: "⏳♾️", probabilitas: 27 },  
+        { name: "Alam Semesta", emoji: "🌌⭐", probabilitas: 10 },  
+        { name: "Zephyria Horizon", emoji: "🌌♾️", probabilitas: 3 }  
+    ]
+},
+
+// 🌌 Tier Dimensi  
+{
+    name: "Peti Dimensi",
+    emoji: "🎁🌌",
+    type: "chest",
+    harga: 150,
+    tier: "Dimensi",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Lubang Cacing", emoji: "🕳️✨", probabilitas: 30 },  
+        { name: "Teleporter", emoji: "🌌⚡", probabilitas: 25 },  
+        { name: "Chronos Aeternus", emoji: "⏳♾️", probabilitas: 20 },  
+        { name: "Alam Semesta", emoji: "🌌⭐", probabilitas: 15 },  
+        { name: "Kristal Es", emoji: "❄️💎", probabilitas: 10 }  
+    ]
+},
+
+// ⚡ Tier Ultimate  
+{
+    name: "Peti Ultimate",
+    emoji: "🎁⚡",
+    type: "chest",
+    harga: 250,
+    tier: "Ultimate",
+    menggunakanKoin: false,
+    hadiah: [
+        { name: "Alam Semesta", emoji: "🌌⭐", probabilitas: 60 },  
+        { name: "Zephyria Horizon", emoji: "🌌♾️", probabilitas: 30 }  
+    ]
+},
+
+    // ==================== ITEM KHUSUS ====================
+    {
+        name: "1 Kunci",
+        emoji: "🔑",
+        type: "kunci",
+        harga: 10,
+        menggunakanKoin: true,
+        jumlah: 1
+    },
+    {
+        name: "5 Kunci",
+        emoji: "🔑5",
+        type: "kunci",
+        harga: 40,
+        menggunakanKoin: true,
+        jumlah: 5
+    },
+    {
+        name: "10 Kunci",
+        emoji: "🔑10",
+        type: "kunci",
+        harga: 75,
+        menggunakanKoin: true,
+        jumlah: 10
+    },
+    {
+        name: "25 Kunci",
+        emoji: "🔑25",
+        type: "kunci",
+        harga: 175,
+        menggunakanKoin: true,
+        jumlah: 25
+    },
+    {
+        name: "50 Kunci",
+        emoji: "🔑50",
+        type: "kunci",
+        harga: 325,
+        menggunakanKoin: true,
+        jumlah: 50
+    },
+    {
+        name: "100 Kunci",
+        emoji: "🔑100",
+        type: "kunci",
+        harga: 600,
+        menggunakanKoin: true,
+        jumlah: 100000000
+    }
+];
+
+        function updateItems() {
+            discoveredElements.sort((a, b) => a.name.localeCompare(b.name));
+            localStorage.setItem("elements", JSON.stringify(discoveredElements));
+            
+            localStorage.setItem("koin", koin.toString());
+            document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+
+            const totalElements = 100;
+            const persentase = ((discoveredElements.length / totalElements) * 100).toFixed(2);
+            document.getElementById("fraction").innerText = `${discoveredElements.length}/${totalElements}`;
+            document.getElementById("progress-text").innerText = `${persentase}%`;
+
+            let progress = (discoveredElements.length / totalElements) * 100;
+            document.getElementById("progress-bar").style.width = progress + "%";
+
+            const itemsDiv = document.getElementById("items");
+            itemsDiv.innerHTML = "";
+            discoveredElements.forEach(el => {
+                let div = document.createElement("div");
+                div.classList.add("item");
+                div.setAttribute("data-name", el.name);
+                div.innerHTML = `<span>${el.emoji} ${el.name}</span>`;
+                div.addEventListener("click", () => selectItem(div));
+                itemsDiv.appendChild(div);
+            });
+
+            const koleksiDiv = document.getElementById("koleksi-items");
+            koleksiDiv.innerHTML = "";
+
+            const barangBiasa = [
+    { nama: "Emas", emoji: "🪙" },
+    { nama: "Piala", emoji: "🏆" },
+    { nama: "Lampu", emoji: "💡" },
+    { nama: "Berlian", emoji: "💎" },
+    { nama: "Bintang", emoji: "⭐" },
+    { nama: "Jam Pasir", emoji: "⏳" },
+    { nama: "Jam", emoji: "⌚" },
+    { nama: "Buku", emoji: "📖" },
+    { nama: "Payung", emoji: "☂️" },
+    { nama: "Kamera", emoji: "📷" },
+    { nama: "Sepatu", emoji: "👟" },
+    { nama: "Kacamata", emoji: "🕶️" }
+];
+
+const barangLangka = [
+    { nama: "Cincin Berlian", emoji: "💍" },
+    { nama: "Medali Emas", emoji: "🥇" },
+    { nama: "Robot", emoji: "🤖" },
+    { nama: "Ametis", emoji: "💎🔮" },
+    { nama: "Buku Rahasia", emoji: "📖✨" },
+    { nama: "Mahkota Emas", emoji: "👑🌟" },
+    { nama: "Planet", emoji: "🪐" },
+    { nama: "Alien", emoji: "👽" },
+    { nama: "Kristal Es", emoji: "❄️💎" },
+    { nama: "Batu Meteor", emoji: "🪨☄️" }
+];
+
+const barangEpik = [
+    { nama: "Pesawat", emoji: "✈️" },
+    { nama: "Komet", emoji: "💫" },
+    { nama: "Roket", emoji: "🚀" },
+    { nama: "UFO", emoji: "🛸" },
+    { nama: "Robot Super", emoji: "🤖⚡" },
+    { nama: "Kastil Eterna", emoji: "🏰♾️" },
+    { nama: "Pedang Excalibur", emoji: "⚔️✨" }
+];
+
+const barangLegendaris = [
+    { nama: "Galaksi", emoji: "🌌" },
+    { nama: "Lubang Cacing", emoji: "🕳️✨" },
+    { nama: "Teleporter", emoji: "🌌⚡" },
+    { nama: "Chronos Aeternus", emoji: "⏳♾️" }
+];
+const barangMitos = [
+    { nama: "Alam Semesta", emoji: "🌌⭐" },
+    { nama: "Zephyria Horizon", emoji: "🌌♾️" }
+];
+
+            // Barang Biasa
+const BiasaDiv = document.createElement("div");
+BiasaDiv.innerHTML = "<h2>Barang Biasa</h>";
+const BiasaGrid = document.createElement("div");
+BiasaGrid.className = "Biasa-grid";
+BiasaGrid.style.display = "flex";
+BiasaGrid.style.flexWrap = "wrap";
+BiasaGrid.style.gap = "20px";
+BiasaGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangBiasa.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.display = "flex";
+itemDiv.style.flexDirection = "column";
+itemDiv.style.alignItems = "center";
+itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: white; color: black; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    BiasaGrid.appendChild(itemDiv);
+});
+
+BiasaDiv.appendChild(BiasaGrid);
+koleksiDiv.appendChild(BiasaDiv);
+
+            // Barang Biasa
+const LangkaDiv = document.createElement("div");
+LangkaDiv.innerHTML = "<h2>Barang Langka</h2>";
+const LangkaGrid = document.createElement("div");
+LangkaGrid.className = "Langka-grid";
+LangkaGrid.style.display = "flex";
+LangkaGrid.style.flexWrap = "wrap";
+LangkaGrid.style.gap = "10px";
+LangkaGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangLangka.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "5px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: 3498db; color: white; border-radius: 20px; 
+                            width: 90px; height: 90px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    LangkaGrid.appendChild(itemDiv);
+});
+
+LangkaDiv.appendChild(LangkaGrid);
+koleksiDiv.appendChild(LangkaDiv);
+
+            // Barang Biasa
+const EpikDiv = document.createElement("div");
+EpikDiv.innerHTML = "<h2>Barang Epik</h2>";
+const EpikGrid = document.createElement("div");
+EpikGrid.className = "Epik-grid";
+EpikGrid.style.display = "flex";
+EpikGrid.style.flexWrap = "wrap";
+EpikGrid.style.gap = "10px";
+EpikGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangEpik.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "5px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: yellow; color: black; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    EpikGrid.appendChild(itemDiv);
+});
+
+EpikDiv.appendChild(EpikGrid);
+koleksiDiv.appendChild(EpikDiv);
+
+            // Barang Biasa
+const LegendarisDiv = document.createElement("div");
+LegendarisDiv.innerHTML = "<h2>Barang Legendaris</h2>";
+const LegendarisGrid = document.createElement("div");
+LegendarisGrid.className = "Legendaris-grid";
+LegendarisGrid.style.display = "flex";
+LegendarisGrid.style.flexWrap = "wrap";
+LegendarisGrid.style.gap = "10px";
+LegendarisGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangLegendaris.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "10px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: red; color: white; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    LegendarisGrid.appendChild(itemDiv);
+});
+
+LegendarisDiv.appendChild(LegendarisGrid);
+koleksiDiv.appendChild(LegendarisDiv);
+
+
+            // Barang Biasa
+const MitosDiv = document.createElement("div");
+MitosDiv.innerHTML = "<h2>Barang Mitos</h2>";
+const MitosGrid = document.createElement("div");
+MitosGrid.className = "Mitos-grid";
+MitosGrid.style.display = "flex";
+MitosGrid.style.flexWrap = "wrap";
+MitosGrid.style.gap = "10px";
+MitosGrid.style.justifyContent = "center"; // Tambahkan ini
+
+barangMitos.forEach((item, index) => {
+    const itemData = koleksi.find(i => i.name === item.name);
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("item");
+    
+    // Tambahkan style untuk semua item
+    itemDiv.style.margin = "5px";
+    itemDiv.style.display = "flex";
+    itemDiv.style.alignItems = "center";
+    itemDiv.style.justifyContent = "center";
+
+    if (itemData) {
+        itemDiv.innerHTML = `<span style="font-size: 2em">${itemData.emoji}</span>`;
+    } else {
+        itemDiv.innerHTML = `<span style="background: yellow; color: black; border-radius: 20px; 
+                            width: 100px; height: 100px; display: flex; align-items: center; 
+                            justify-content: center;">?</span>`;
+    }
+    
+    MitosGrid.appendChild(itemDiv);
+});
+
+MitosDiv.appendChild(MitosGrid);
+koleksiDiv.appendChild(MitosDiv);
+        }
+        function selectItem(itemDiv) {
+    const itemName = itemDiv.getAttribute("data-name");
+    console.log("Item diklik:", itemName); // Debugging
+
+    if (selectedItems.includes(itemName)) {
+        selectedItems = selectedItems.filter(item => item !== itemName);
+        itemDiv.classList.remove("selected");
+    } else {
+        if (selectedItems.length < 2) {
+            selectedItems.push(itemName);
+            itemDiv.classList.add("selected");
+        } else {
+            alert("Anda hanya dapat memilih maksimal 2 elemen!");
+            return; // Mencegah pemilihan lebih dari 2 elemen
+        }
+    }
+
+    console.log("Selected Items:", selectedItems); // Debugging
+
+    // Update chatbox
+    if (selectedItems.length === 1) {
+        document.getElementById("chatbox").innerText = `${selectedItems[0]} +`;
+    } else if (selectedItems.length === 2) {
+        combineItems();
+    }
+}    
+function resetLocalStorage() {
+    let confirm1 = confirm("⚠️ Apakah kamu yakin ingin mereset game?");
+    if (!confirm1) return;
+
+    let confirm2 = confirm("⚠️ Ini adalah konfirmasi kedua! Data akan dihapus permanen.");
+    if (!confirm2) return;
+
+    let confirm3 = confirm("⚠️ Ini adalah konfirmasi terakhir! Tekan OK untuk menghapus semua progres.");
+    if (!confirm3) return;
+
+    localStorage.clear(); // Hapus semua data yang tersimpan
+    location.reload(); // Muat ulang halaman untuk kembali ke kondisi awal
+}
+
+        function showTab(tabName) {
+    document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
+    document.getElementById(tabName).style.display = "block";
+
+    document.querySelectorAll("#sidebar button").forEach(button => button.classList.remove("active"));
+    document.getElementById(`tab-${tabName}`).classList.add("active");
+    
+    // Tambahkan ini untuk refresh konten saat tab pencapaian dibuka
+    if(tabName === "pencapaian") {
+        loadAchievements(); // Memuat ulang data pencapaian
+        updateItems();      // Memastikan data elements terupdate
+    }
+
+    if (tabName === "koleksi") {
+        updateKoleksi();
+    }
+
+    if (tabName === "toko") {
+        updateTokoItems();
+    }
+}
+
+        function updateTokoItems() {
+    const tokoDiv = document.getElementById("toko-items");
+    tokoDiv.innerHTML = "";
+
+    tokoItems.forEach(item => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item");
+        
+        // Tambahkan atribut data-type untuk peti
+        if (item.type === "chest") {
+            itemDiv.setAttribute("data-type", "chest");
+            itemDiv.setAttribute("data-tier", item.tier);
+        }
+
+        // PERBAIKAN 1: Cek kepemilikan yang benar
+        const isPremiumItem = item.type === "chest" || item.name === "Kunci";
+        const sudahMemiliki = !isPremiumItem && koleksi.find(i => i.name === item.name);
+        
+        // PERBAIKAN 2: Handle tampilan untuk peti
+        if (item.type === "chest") {
+            itemDiv.innerHTML = `
+                <div class="chest-header">
+                    ${item.emoji} 
+                    <span class="chest-name">${item.name}</span>
+                </div>
+                <div class="chest-details">
+                    <span>Harga: ${item.harga} kunci</span>
+                    
+                </div>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+        // Handle item Biasa
+        else if (sudahMemiliki) {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                <br>
+                <span class="owned-badge" style="color: gray;">Anda sudah<br>memiliki ${item.name}</span>
+            `;
+        } else {
+            itemDiv.innerHTML = `
+                <span>${item.emoji} ${item.name}</span>
+                
+                <span>Harga: ${item.harga} ${item.menggunakanKoin ? "koin" : "kunci"}</span>
+            `;
+            itemDiv.addEventListener("click", () => buyItem(item));
+        }
+
+        tokoDiv.appendChild(itemDiv);
+    });
+}
+
+let selectedItems = [];
+        
+function buyItem(item) {
+    if (item.menggunakanKoin) {
+        if (koin >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} koin?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Koin tidak cukup!");
+        }
+    } else {
+        if (kunci >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} kunci?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Kunci tidak cukup!");
+        }
+    }
+}
+
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    // Perbaikan 1: Tambahkan null checking
+    if (!itemToBuy) {
+        console.error("Item tidak ditemukan!");
+        return;
+    }
+
+    // Perbaikan 2: Pindahkan blok if ke dalam fungsi yang benar
+    if (confirm) {
+        console.log("Sebelum pembelian, koin:", koin);
+        console.log("Harga item:", itemToBuy.harga);
+
+        // Perbaikan 3: Validasi saldo sebelum transaksi
+        if (itemToBuy.menggunakanKoin) {
+            if (koin < itemToBuy.harga) {
+                alert("Koin tidak cukup!");
+                return;
+            }
+            koin -= itemToBuy.harga;
+        } else {
+            if (kunci < itemToBuy.harga) {
+                alert("Kunci tidak cukup!");
+                return;
+            }
+            kunci -= itemToBuy.harga;
+        }
+
+        // Perbaikan 4: Update saldo setelah transaksi
+        localStorage.setItem("koin", koin.toString());
+        localStorage.setItem("kunci", kunci.toString());
+        document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+        document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+
+        // Perbaikan 5: Handle pembelian kunci vs item lain
+        if (itemToBuy.name === "Kunci") {
+            kunci += 1;
+            localStorage.setItem("kunci", kunci.toString());
+            alert("🔑 Kunci berhasil dibeli!");
+        } else if (itemToBuy.type === "chest") {
+            // Handle pembukaan peti
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🎁 Dapatkan: ${hadiah.emoji} ${hadiah.name}`);
+        } else {
+            koleksi.push(itemToBuy);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🛍️ Anda membeli: ${itemToBuy.emoji} ${itemToBuy.name}`);
+        }
+
+        // Perbaikan 6: Update UI dan reset variabel
+        updateItems();
+        updateTokoItems();
+        itemToBuy = null; // Reset setelah transaksi
+    }
+}
+        function getRandomHadiah(hadiahList) {
+            const totalProbabilitas = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+            const randomNum = Math.random() * totalProbabilitas;
+            let cumulativeProbabilitas = 0;
+
+            for (const item of hadiahList) {
+                cumulativeProbabilitas += item.probabilitas;
+                if (randomNum <= cumulativeProbabilitas) {
+                    return item;
+                }
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            sidebar.classList.toggle("active");
+            content.classList.toggle("sidebar-active");
+        }
+
+        updateItems();
+        showTab("elemen");
+        
+function buyItem(item) {
+    if (item.menggunakanKoin) {
+        if (koin >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} koin?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Koin tidak cukup!");
+        }
+    } else {
+        if (kunci >= item.harga) {
+            itemToBuy = item;
+            document.getElementById("confirmation-text").innerText = `Apakah Anda yakin ingin membeli ${item.name} seharga ${item.harga} kunci?`;
+            document.getElementById("confirmation").style.display = "block";
+        } else {
+            alert("Kunci tidak cukup!");
+        }
+    }
+}
+
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    // Perbaikan 1: Tambahkan null checking
+    if (!itemToBuy) {
+        console.error("Item tidak ditemukan!");
+        return;
+    }
+
+    // Perbaikan 2: Pindahkan blok if ke dalam fungsi yang benar
+    if (confirm) {
+        console.log("Sebelum pembelian, koin:", koin);
+        console.log("Harga item:", itemToBuy.harga);
+
+        // Perbaikan 3: Validasi saldo sebelum transaksi
+        if (itemToBuy.menggunakanKoin) {
+            if (koin < itemToBuy.harga) {
+                alert("Koin tidak cukup!");
+                return;
+            }
+            koin -= itemToBuy.harga;
+        } else {
+            if (kunci < itemToBuy.harga) {
+                alert("Kunci tidak cukup!");
+                return;
+            }
+            kunci -= itemToBuy.harga;
+        }
+
+        // Perbaikan 4: Update saldo setelah transaksi
+        localStorage.setItem("koin", koin.toString());
+        localStorage.setItem("kunci", kunci.toString());
+        document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+        document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+
+        // Perbaikan 5: Handle pembelian kunci vs item lain
+        if (itemToBuy.name === "Kunci") {
+            kunci += 1;
+            localStorage.setItem("kunci", kunci.toString());
+            alert("🔑 Kunci berhasil dibeli!");
+        } else if (itemToBuy.type === "chest") {
+            // Handle pembukaan peti
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🎁 Dapatkan: ${hadiah.emoji} ${hadiah.name}`);
+        } else {
+            koleksi.push(itemToBuy);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            alert(`🛍️ Anda membeli: ${itemToBuy.emoji} ${itemToBuy.name}`);
+        }
+
+        // Perbaikan 6: Update UI dan reset variabel
+        updateItems();
+        updateTokoItems();
+        itemToBuy = null; // Reset setelah transaksi
+    }
+}
+        function getRandomHadiah(hadiahList) {
+            const totalProbabilitas = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+            const randomNum = Math.random() * totalProbabilitas;
+            let cumulativeProbabilitas = 0;
+
+            for (const item of hadiahList) {
+                cumulativeProbabilitas += item.probabilitas;
+                if (randomNum <= cumulativeProbabilitas) {
+                    return item;
+                }
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            sidebar.classList.toggle("active");
+            content.classList.toggle("sidebar-active");
+        }
+
+        updateItems();
+        showTab("elemen");
+    
+</script>
+    <script>
+    function combineElements() {
+    const chatbox = document.getElementById('chatbox');
+    let element1 = document.getElementById('element1').value.trim();
+    let element2 = document.getElementById('element2').value.trim();
+
+    if (!element1 || !element2) {
+        return;
+    }
+
+    // Show the first element in the chatbox
+    let message = document.createElement('div');
+    message.classList.add('message');
+    message.style.color = "black";
+    message.textContent = `${element1} +`;
+    chatbox.appendChild(message);
+
+    // Check combination validity
+    let resultMessage = document.createElement('div');
+    resultMessage.classList.add('message');
+
+    let combinationResult = "";
+    let resultColor = "";
+
+    // Define valid combinations (you can expand this with more combinations)
+    if (element1 === "Air" && element2 === "Api") {
+        combinationResult = "Air + Api = Uap";
+        resultColor = "green"; // Valid combination
+    } else if (element1 === "Api" && element2 === "Air") {
+        combinationResult = "Air + Api = Uap";
+        resultColor = "green"; // Valid combination
+    } else {
+        combinationResult = `${element1} + ${element2} = Kombinasi tidak valid`;
+        resultColor = "red"; // Invalid combination
+    }
+
+    resultMessage.style.color = resultColor;
+    resultMessage.textContent = combinationResult;
+    chatbox.appendChild(resultMessage);
+
+    // Clear the input fields for the next combination
+    document.getElementById('element1').value = "";
+    document.getElementById('element2').value = "";
+
+    // Scroll to the bottom of the chatbox
+    chatbox.scrollTop = chatbox.scrollHeight;
+};
+function selectItem(itemDiv) {
+    const itemName = itemDiv.getAttribute("data-name");
+    
+    // Jika sudah terpilih 2 item, reset
+    if (selectedItems.length === 2) {
+        selectedItems = [];
+        document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+    }
+
+    // Tambahkan item ke seleksi
+    if (selectedItems.length < 2) {
+        selectedItems.push(itemName);
+        itemDiv.classList.add("selected");
+    }
+
+    // Update chatbox
+    const chatMessage = selectedItems.join(" + ");
+    document.getElementById("chatbox").innerHTML = chatMessage;
+
+    // Auto combine jika sudah 2 elemen
+    if (selectedItems.length === 2) {
+        setTimeout(combineItems, 500);
+    }
+}
+
+    function updateAchievements() {
+    const achievementContainer = document.getElementById("achievement-container");
+    achievementContainer.innerHTML = ""; // Bersihkan dulu sebelum update
+
+    // Pastikan variabel ini ada di kode utama
+    const unlockedElements = JSON.parse(localStorage.getItem("unlockedElements")) || [];
+    const collectedItems = JSON.parse(localStorage.getItem("collectedItems")) || [];
+
+    const achievements = [
+        { id: "p1", text: "Buat 10 elemen", achieved: unlockedElements.length >= 10 },
+        { id: "p2", text: "Buat 20 elemen", achieved: unlockedElements.length >= 20 },
+        { id: "p3", text: "Buat 50 elemen", achieved: unlockedElements.length >= 50 },
+        { id: "p4", text: "Buat 100 elemen", achieved: unlockedElements.length >= 100 },
+        { id: "p5", text: "Buat 200 elemen", achieved:
+unlockedElements.length >=200 },
+        { id: "p6", text: "Miliki 3 barang Biasa di koleksi", achieved: collectedItems.length >= 3 },
+        { id: "p7", text: "Miliki semua barang Biasa di koleksi", achieved: collectedItems.length >= 6 }
+    ];
+    
+    const totalElements = discoveredElements.length; // Ganti dengan variabel yang menyimpan elemen yang ditemukan
+const totalItems = Object.keys(koleksi).length; // Hitung jumlah barang di koleksi
+
+
+
+    achievements.forEach(ach => {
+        const div = document.createElement("div");
+        div.classList.add("achievement");
+        if (ach.achieved) div.classList.add("completed");
+
+        div.innerHTML = `<span class="icon">🏆</span> ${ach.text}`;
+        achievementContainer.appendChild(div);
+    });
+}
+
+// Panggil fungsi ini saat pertama kali halaman dimuat
+updateAchievements();
+function addItem(item) {
+    if (!collectedItems.includes(item)) {
+        collectedItems.push(item);
+        updateCollectionDisplay(); // Perbarui tampilan koleksi
+    }
+}
+</script>
+<script>
+    function updateElementList() {
+    let container = document.getElementById("element-container");
+    if (!container) return;
+
+    container.innerHTML = ""; // Kosongkan dulu
+
+    discoveredElements.forEach(element => {
+        let div = document.createElement("div");
+        div.className = "element-item";
+        div.innerHTML = `${element.emoji} ${element.name}`;
+        container.appendChild(div);
+    });
+}
+</script>
+<style>
+/* Tambahkan di bagian style */
+#toko-items .item {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 150px;
+}
+
+#toko-items .item span {
+    display: block;
+    margin: 5px 0;
+}
+</style>
+<style>
+    // Untuk mengatur posisi dan ukuran via JavaScript:
+function adjustCollectionBackground(x = '5%', y = '10px', width = '50%', height = 'calc(100% - 40px)') {
+    const bg = document.querySelector('.collection-background');
+    bg.style.setProperty('--pos-x', x);
+    bg.style.setProperty('--pos-y', y);
+    bg.style.setProperty('--bg-width', width);
+    bg.style.setProperty('--bg-height', height);
+}
+
+// Contoh penggunaan:
+adjustCollectionBackground(
+    '20px',    // Posisi X
+    '50px',    // Posisi Y
+    '80%',     // Lebar
+    '40px'    // Tinggi
+);
+</style>
+<script>
+    function updateTokoItems() {
+    const tokoDiv = document.getElementById("toko-items");
+    tokoDiv.innerHTML = "";
+
+    const categories = [
+        { 
+        type: "regular", 
+        title: "🛍️ Barang Biasa",
+        items: tokoItems.filter(item => item.type === "regular") 
+    },
+    { 
+        type: "kunci", // PASTIKAN TYPE INI SESUAI DENGAN DATA
+        title: "🔑 Kunci", 
+        items: tokoItems.filter(item => item.type === "kunci")
+    },
+    { 
+        type: "chest", 
+        title: "🎁 Peti Misteri",
+        items: tokoItems.filter(item => item.type === "chest")
+    },
+];
+
+
+    categories.forEach(category => {
+        if(category.items.length === 0) return;
+
+        const categoryDiv = document.createElement("div");
+        categoryDiv.className = "toko-category";
+        
+        const title = document.createElement("h2");
+        title.textContent = category.title;
+        categoryDiv.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "toko-grid";
+
+        category.items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "toko-item";
+            itemDiv.setAttribute("data-type", item.type);
+            
+            // CEK KEPEMILIKAN
+            const sudahMemiliki = koleksi.some(i => i.name === item.name);
+            const isRegular = item.type === "regular";
+
+            let content = `
+                <div class="emoji-large">${item.emoji}</div>
+                <div>${item.name}</div>
+            `;
+
+            if(isRegular && sudahMemiliki) {
+                content += `<div class="owned-badge">Sudah<br>dimiliki</div>`;
+                itemDiv.style.opacity = "1";
+                itemDiv.style.pointerEvents = "none";
+            } else {
+                content += `
+                    <div class="item-price">
+                        ${item.harga} ${item.menggunakanKoin ? '🪙' : '🔑'}
+                    </div>
+                `;
+                itemDiv.onclick = () => buyItem(item);
+            }
+
+            itemDiv.innerHTML = content;
+            grid.appendChild(itemDiv);
+        });
+
+        categoryDiv.appendChild(grid);
+        tokoDiv.appendChild(categoryDiv);
+    });
+}
+</script>
+<script>
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    if (confirm && itemToBuy) {
+        // Handle pembelian KUNCI
+        if(itemToBuy.type === "kunci") {
+            if(koin >= itemToBuy.harga) {
+                koin -= itemToBuy.harga;
+                kunci += itemToBuy.jumlah; // INI YANG DIPERBAIKI
+                
+                localStorage.setItem("koin", koin.toString());
+                localStorage.setItem("kunci", kunci.toString());
+                
+                document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+                document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+                alert(`+${itemToBuy.jumlah} Kunci berhasil dibeli!`);
+            } else {
+                alert("Koin tidak cukup!");
+            }
+        }
+        // ... handle lainnya ...
+    }
+    itemToBuy = null;
+    updateTokoItems();
+}
+</script>
+<script>
+    function getRandomHadiah(hadiahList) {
+    const total = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+    const random = Math.random() * total;
+    
+    let cumulative = 0;
+    for(const item of hadiahList) {
+        cumulative += item.probabilitas;
+        if(random <= cumulative) {
+            return {
+                name: item.name,
+                emoji: item.emoji,
+                tier: item.tier || "common"
+            };
+        }
+    }
+}
+</script>
+<script>
+function confirmPurchase(confirm) {
+    const confirmationDiv = document.getElementById("confirmation");
+    confirmationDiv.style.display = "none";
+    
+    if (!confirm || !itemToBuy) return;
+
+    // Handle pembelian berdasarkan jenis item
+    if (itemToBuy.type === "chest") {
+        // Handle pembelian peti
+        if (kunci >= itemToBuy.harga) {
+            kunci -= itemToBuy.harga;
+            
+            // Dapatkan hadiah acak
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            
+            // Update UI dan localStorage
+            localStorage.setItem("kunci", kunci.toString());
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            
+            document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+            alert(`🎉 Berhasil membuka peti!\nAnda mendapatkan: ${hadiah.emoji} ${hadiah.name}`);
+            updateItems();
+        } else {
+            alert("❌ Kunci tidak cukup untuk membeli peti ini!");
+        }
+    } 
+    else if (itemToBuy.type === "kunci") {
+        // Handle pembelian paket kunci
+        if (koin >= itemToBuy.harga) {
+            koin -= itemToBuy.harga;
+            kunci += itemToBuy.jumlah;
+            
+            // Update UI dan localStorage
+            localStorage.setItem("koin", koin.toString());
+            localStorage.setItem("kunci", kunci.toString());
+            
+            document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+            document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+            alert(`✅ Berhasil membeli ${itemToBuy.jumlah} kunci!`);
+        } else {
+            alert("❌ Koin tidak cukup!");
+        }
+    } 
+    else if (itemToBuy.type === "regular") {
+        // Handle pembelian barang Biasa
+        if (koin >= itemToBuy.harga) {
+            koin -= itemToBuy.harga;
+            koleksi.push(itemToBuy);
+            
+            // Update UI dan localStorage
+            localStorage.setItem("koin", koin.toString());
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            
+            document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+            alert(`🎁 Berhasil membeli ${itemToBuy.emoji} ${itemToBuy.name}!`);
+            updateTokoItems();
+        } else {
+            alert("❌ Koin tidak cukup!");
+        }
+    }
+
+    // Reset variabel pembelian
+    itemToBuy = null;
+    updateTokoItems();
+}
+
+function getRandomHadiah(hadiahList) {
+    const totalProbabilitas = hadiahList.reduce((sum, item) => sum + item.probabilitas, 0);
+    const randomNum = Math.random() * totalProbabilitas;
+    
+    let cumulativeProbabilitas = 0;
+    for (const item of hadiahList) {
+        cumulativeProbabilitas += item.probabilitas;
+        if (randomNum <= cumulativeProbabilitas) {
+            return {
+                name: item.name,
+                emoji: item.emoji,
+                tier: item.tier || "common"
+            };
+        }
+    }
+}
+</script>
+<script>
+    let selectedChest = null;
+
+function buyItem(item) {
+    if (item.type === "chest") {
+        // Tampilkan modal probabilitas untuk peti
+        selectedChest = item;
+        showChestModal(item);
+    } else {
+        // Langsung tampilkan konfirmasi untuk item non-peti
+        itemToBuy = item;
+        showConfirmationDialog(item);
+    }
+}
+
+function showChestModal(chest) {
+    const modal = document.getElementById("chestModal");
+    const title = document.getElementById("chestTitle");
+    const list = document.getElementById("probabilityList");
+    
+    // Update judul
+    title.innerHTML = `${chest.emoji} ${chest.name} - Probabilitas Hadiah`;
+    
+    // Update daftar probabilitas
+    list.innerHTML = chest.hadiah.map(reward => `
+        <div class="probability-item">
+            <span>${reward.emoji} ${reward.name}</span>
+            <span>${reward.probabilitas}%</span>
+        </div>
+    `).join('');
+    
+    modal.style.display = 'flex';
+}
+
+function closeChestModal() {
+    document.getElementById("chestModal").style.display = 'none';
+    selectedChest = null;
+}
+
+function proceedToPurchase() {
+    closeChestModal();
+    if (selectedChest) {
+        showConfirmationDialog(selectedChest);
+    }
+}
+
+function showConfirmationDialog(item) {
+    itemToBuy = item;
+    document.getElementById("confirmation-text").innerText = 
+        `Beli ${item.name} seharga ${item.harga} kunci?`;
+    document.getElementById("confirmation").style.display = 'block';
+}
+// Fungsi combineItems yang diperbaiki
+function combineItems() {
+    if (selectedItems.length !== 2) return;
+
+    const [elemen1, elemen2] = selectedItems;
+    const key1 = `${elemen1}+${elemen2}`;
+    const key2 = `${elemen2}+${elemen1}`;
+    const hasil = kombinasi[key1] || kombinasi[key2];
+    
+    // Daftar 4 elemen dasar awal
+    const initialElements = ["Air", "Api", "Tanah", "Udara"];
+
+    if (hasil) {
+        const isNewElement = !discoveredElements.some(e => e.name === hasil.name);
+        const isElementDasar = initialElements.includes(hasil.name);
+
+        if (isNewElement) {
+            discoveredElements.push(hasil);
+            localStorage.setItem("elements", JSON.stringify(discoveredElements));
+            
+            // Tambah 5 koin jika BUKAN elemen dasar awal
+            if (!isElementDasar) {
+                koin += 10;
+                localStorage.setItem("koin", koin.toString());
+                document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+                
+                // Notifikasi di chatbox
+                const chatbox = document.getElementById("chatbox");
+                chatbox.innerHTML = `<span class="combination-success">
+                    Ditemukan elemen baru: ${hasil.emoji} ${hasil.name}, +10 Koin!
+                </span>`;
+            }
+            
+            updateItems();
+        }
+    }
+    
+    // Reset pilihan
+    selectedItems = [];
+    document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+}
+</script>
+<div class="top-notification" id="top-notification"></div>
+<div id="white-chatbox"></div>
+<div class="chest-probability-modal" id="probabilityModal">
+    <div class="probability-content">
+        <div class="probability-header">
+            <h2>📦 Konten Peti Misteri</h2>
+            <div class="tier-badge" id="tierBadge">Tier</div>
+        </div>
+        <ul class="probability-list" id="probabilityList"></ul>
+        <div class="modal-actions">
+            <button onclick="closeProbabilityModal()" class="cancel-btn">✖ Batal</button>
+            <button onclick="proceedToPurchase()" class="confirm-btn">🔓 Buka Peti</button>
+        </div>
+    </div>
+</div>
+<style>
+    let currentChestItem = null;
+
+function buyItem(item) {
+    if (item.type === "chest") {
+        currentChestItem = item;
+        showProbabilityModal(item);
+    } else {
+        // Handle pembelian item Biasa
+        itemToBuy = item;
+        document.getElementById("confirmation-text").innerText = 
+            `Beli ${item.name} seharga ${item.harga} ${item.menggunakanKoin ? 'koin' : 'kunci'}?`;
+        document.getElementById("confirmation").style.display = "block";
+    }
+}
+
+function showProbabilityModal(chest) {
+    const modal = document.getElementById("probabilityModal");
+    const tierBadge = document.getElementById("tierBadge");
+    const probabilityList = document.getElementById("probabilityList");
+    
+    // Update tier badge
+    tierBadge.textContent = chest.tier ? `${chest.tier}` : 'Mystery';
+
+    // Populate probability list
+    probabilityList.innerHTML = '';
+    chest.hadiah.forEach(reward => {
+        const li = document.createElement('li');
+        li.className = 'probability-item';
+        li.innerHTML = `
+            <div class="item-emoji">${reward.emoji}</div>
+            <div class="item-details">
+                <div class="item-name">${reward.name}</div>
+                <div class="item-probability">${reward.probabilitas}%</div>
+                <div class="probability-bar">
+                    <div class="probability-fill" style="width: ${reward.probabilitas}%"></div>
+                </div>
+            </div>
+        `;
+        probabilityList.appendChild(li);
+    });
+
+    modal.style.display = 'flex';
+}
+
+function closeProbabilityModal() {
+    document.getElementById("probabilityModal").style.display = 'none';
+    currentChestItem = null;
+}
+
+function proceedToPurchase() {
+    closeProbabilityModal();
+    if (!currentChestItem) return;
+
+    // Tampilkan konfirmasi pembelian
+    document.getElementById("confirmation-text").innerText = 
+        `Buka ${currentChestItem.name} seharga ${currentChestItem.harga} kunci?`;
+    document.getElementById("confirmation").style.display = 'block';
+}
+
+// Modifikasi fungsi confirmPurchase
+function confirmPurchase(confirm) {
+    document.getElementById("confirmation").style.display = "none";
+    
+    if (confirm && currentChestItem) {
+        // Handle pembukaan peti
+        if (kunci >= currentChestItem.harga) {
+            kunci -= currentChestItem.harga;
+            const hadiah = getRandomHadiah(currentChestItem.hadiah);
+            koleksi.push(hadiah);
+        if (itemToBuy.type === "chest") {
+            const hadiah = getRandomHadiah(itemToBuy.hadiah);
+            koleksi.push(hadiah);
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            updateKoleksi();
+            
+            // Update UI
+            localStorage.setItem("kunci", kunci.toString());
+            localStorage.setItem("koleksi", JSON.stringify(koleksi));
+            document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+            
+            // Tampilkan animasi hadiah
+            showRewardAnimation(hadiah);
+            updateKoleksi();
+            updateTokoItems();
+        } else {
+            alert("Kunci tidak cukup!");
+        }
+    }
+    currentChestItem = null;
+}
+
+function showRewardAnimation(reward) {
+    const animationDiv = document.createElement("div");
+    animationDiv.style = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3em;
+        animation: rewardPop 1s ease-out;
+        z-index: 1003;
+    `;
+    
+    animationDiv.innerHTML = `
+        <div style="text-align: center;">
+            <div style="font-size: 2em">🎉 SELAMAT! 🎉</div>
+            <div>${reward.emoji}</div>
+            <div style="font-size: 1.2em; margin-top: 10px">${reward.name}</div>
+        </div>
+    `;
+    
+    document.body.appendChild(animationDiv);
+    
+    setTimeout(() => {
+        animationDiv.remove();
+    }, 2000);
+}
+
+// Tambahkan animasi CSS
+</style>
+<div class="chest-modal" id="chestModal">
+    <div class="chest-content">
+        <h2 id="chestTitle">[🎁🏆 Peti Eksklusif]</h2>        
+        <ul class="probability-list" id="probabilityList">
+            <!-- Item probabilitas akan diisi oleh JavaScript -->
+        </ul>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal()">Batal</button>
+            <button class="btn-beli" onclick="proceedToPurchase()">Beli</button>
+        </div>
+    </div>
+</div>
+<script>
+    // Dalam fungsi showChestModal
+function showChestModal(chest) {
+    const modal = document.getElementById("chestModal");
+    const title = document.getElementById("chestTitle");
+    const list = document.getElementById("probabilityList");
+    
+    // Update judul
+    title.innerHTML = `${chest.emoji} ${chest.name}`;
+    
+    // Update daftar probabilitas (pastikan properti 'probabilitas' sesuai)
+    list.innerHTML = chest.hadiah.map(reward => `
+        <div class="probability-item">
+            <div class="item-name">
+                <span>${reward.emoji}</span>
+                <span>${reward.name}</span>
+            </div>
+            <div class="item-percent">
+                ${reward.probabilitas}% <!-- Pastikan properti ini ada di data -->
+            </div>
+        </div>
+    `).join('');
+    
+    modal.style.display = 'flex';
+}
+// Tambahkan fungsi ini
+function showConfirmationDialog(item) {
+    itemToBuy = item;
+    document.getElementById("confirmation-text").innerText = 
+        `Apakah anda yakin ingin membeli ${item.name} seharga ${item.harga} koin?`;
+    document.getElementById("confirmation").style.display = 'block';
+}
+
+// Modifikasi fungsi proceedToPurchase
+function proceedToPurchase() {
+    closeChestModal();
+    if (selectedChest) {
+        showConfirmationDialog(selectedChest);
+    }
+}
+// Fungsi Modal Peti
+function showChestModal(tier) {
+    document.getElementById(`${tier}ChestModal`).style.display = 'flex';
+}
+
+function closeChestModal(tier) {
+    document.getElementById(`${tier}ChestModal`).style.display = 'none';
+}
+
+// Fungsi Pembelian Peti
+const chestData = {
+    Perunggu: {
+        price: 10,
+        rewards: [
+    { prob: 20, item: { name: "Cincin Berlian", emoji: "💍" } },
+    { prob: 20, item: { name: "Medali Emas", emoji: "🥇" } },
+    { prob: 20, item: { name: "Robot", emoji: "🤖" } },
+    { prob: 15, item: { name: "Ametis", emoji: "💎🔮" } },
+    { prob: 15, item: { name: "Buku Rahasia", emoji: "📖✨" } },
+    { prob: 10, item: { name: "Mahkota Emas", emoji: "👑🌟" } }
+]
+    },
+    Perak: {
+        price: 15,
+        rewards: [
+    { prob: 30, item: { name: "Planet", emoji: "🪐" } },
+    { prob: 25, item: { name: "Alien", emoji: "👽" } },
+    { prob: 20, item: { name: "Kristal Es", emoji: "❄️💎" } },
+    { prob: 15, item: { name: "Batu Meteor", emoji: "🪨☄️" } },
+    { prob: 7, item: { name: "Pesawat", emoji: "✈️" } },
+    { prob: 3, item: { name: "Komet", emoji: "💫" } }
+]
+    },
+    Emas: {
+        price: 20,
+        rewards: [
+    { prob: 35, item: { name: "Roket", emoji: "🚀" } },
+    { prob: 30, item: { name: "UFO", emoji: "🛸" } },
+    { prob: 20, item: { name: "Robot Super", emoji: "🤖⚡" } },
+    { prob: 10, item: { name: "Kastil Eterna", emoji: "🏰♾️" } },
+    { prob: 5, item: { name: "Pedang Excalibur", emoji: "⚔️✨" } }
+]
+    },
+    Eksklusif: { // 🏆 Peti Eksklusif
+        price: 25,
+        rewards: [
+            { prob: 30, item: { name: "Roket", emoji: "🚀" } },
+            { prob: 28, item: { name: "Pedang Excalibur", emoji: "⚔️✨" } },
+            { prob: 28, item: { name: "Kastil Eterna", emoji: "🏰♾️" } },
+            { prob: 7, item: { name: "Galaksi", emoji: "🌌" } },
+            { prob: 7, item: { name: "Lubang Cacing", emoji: "🕳️✨" } }
+        ]
+    },
+    Premium: { // 💎 Peti Premium
+        price: 40,
+        rewards: [
+            { prob: 25, item: { name: "Kristal Es", emoji: "❄️💎" } },
+            { prob: 20, item: { name: "Lubang Cacing", emoji: "🕳️✨" } },
+            { prob: 20, item: { name: "Teleporter", emoji: "🌌⚡" } },
+            { prob: 15, item: { name: "Chronos Aeternus", emoji: "⏳♾️" } },
+            { prob: 15, item: { name: "Galaksi", emoji: "🌌" } },
+            { prob: 5, item: { name: "Alam Semesta", emoji: "🌌⭐" } }
+        ]
+    },
+    Superior: {
+        price: 100,
+        rewards: [
+    { prob: 35, item: { name: "Lubang Cacing", emoji: "🕳️✨" } },
+    { prob: 25, item: { name: "Teleporter", emoji: "🌌⚡" } },
+    { prob: 27, item: { name: "Chronos Aeternus", emoji: "⏳♾️" } },
+    { prob: 10, item: { name: "Alam Semesta", emoji: "🌌⭐" } },
+    { prob: 3, item: { name: "Zephyria Horizon", emoji: "🌌♾️" } }
+    ,]
+    },
+    Dimensi: {
+        price: 150,
+        rewards: [
+    { prob: 30, item: { name: "Lubang Cacing", emoji: "🕳️✨" } },
+    { prob: 25, item: { name: "Teleporter", emoji: "🌌⚡" } },
+    { prob: 25, item: { name: "Chronos Aeternus", emoji: "⏳♾️" } },
+    { prob: 15, item: { name: "Alam Semesta", emoji: "🌌⭐" } },
+    { prob: 5, item: { name: "Zephyria Horizon", emoji: "🌌♾️" } }
+]
+    },
+    Ultimate: {
+        price: 250,
+        rewards: [
+    { prob: 70, item: { name: "Alam Semesta", emoji: "🌌⭐" } },
+    { prob: 30, item: { name: "Zephyria Horizon", emoji: "🌌♾️" } }
+]
+    }
+};
+
+function buyChest(tier) {
+    const chest = chestData[tier];
+    if(kunci >= chest.price) {
+        kunci -= chest.price;
+        const random = Math.random() * 100;
+        let cumulative = 0;
+        
+        for(const reward of chest.rewards) {
+            cumulative += reward.prob;
+            if(random <= cumulative) {
+                koleksi.push(reward.item);
+                localStorage.setItem('koleksi', JSON.stringify(koleksi));
+                alert(`🎉 Berhasil! Dapatkan: ${reward.item.emoji} ${reward.item.name}`);
+                break;
+            }
+        }
+        
+        localStorage.setItem('kunci', kunci.toString());
+        document.getElementById('kunci').innerText = `Kunci🔑: ${kunci}`;
+        updateTokoItems();
+        closeChestModal(tier);
+    } else {
+        alert(`❌ Kunci tidak cukup! Butuh ${chest.price} kunci`);
+    }
+}
+
+// Update Fungsi buyItem
+function buyItem(item) {
+    const tierMap = {
+        'Peti Perunggu': 'Perunggu',
+        'Peti Perak': 'Perak',
+        'Peti Emas': 'Emas',
+        'Peti Eksklusif': 'Eksklusif', // 🏆
+        'Peti Premium': 'Premium',      // 💎
+        'Peti Superior': 'Superior',
+        'Peti Dimensi': 'Dimensi',
+        'Peti Ultimate': 'Ultimate'
+    };
+    
+    if (tierMap[item.name]) {
+        showChestModal(tierMap[item.name]);
+    } else {
+        itemToBuy = item;
+        document.getElementById("confirmation-text").innerText = 
+            `Apakah anda yakin ingin membeli ${item.name} seharga ${item.harga} ${item.menggunakanKoin ? 'koin' : 'kunci'}?`;
+        document.getElementById("confirmation").style.display = 'block';
+    }
+}
+</script>
+<!-- 🥉 **Peti Perunggu** -->
+<div class="chest-modal" id="PerungguChestModal">
+    <div class="chest-content Perunggu-tier">
+        <h2><b>🎁🥉 Peti Perunggu</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #3498db;">💍 Cincin Berlian</b><span><b>20%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">🥇 Medali Emas</b><span><b>20%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">🤖 Robot</b><span><b>20%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">💎🔮 Ametis</b><span><b>15%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">📖✨ Buku Rahasia</b><span><b>15%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">👑🌟 Mahkota Emas</b><span><b>10%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Perunggu')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Perunggu')">Beli (10 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🥈 **Peti Perak** -->
+<div class="chest-modal" id="PerakChestModal">
+    <div class="chest-content Perak-tier">
+        <h2><b>🎁🥈 Peti Perak</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #3498db;">🪐 Planet</b><span><b>30%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">👽 Alien</b><span><b>25%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">❄️💎 Kristal Es</b><span><b>20%</b></span></div>
+        <div class="probability-item"><b style="color: #3498db;">🪨☄️ Batu Meteor</b><span><b>15%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">✈️ Pesawat</b><span><b>7%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">💫 Komet</b><span><b>3%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Perak')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Perak')">Beli (15 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🥇 **Peti Emas** -->
+<div class="chest-modal" id="EmasChestModal">
+    <div class="chest-content Emas-tier">
+        <h2><b>🎁🥇 Peti Emas</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #c78be0;">🚀 Roket</b><span><b>35%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">🛸 UFO</b><span><b>30%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">🤖⚡ Robot Super</b><span><b>20%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">🏰♾️ Kastil Eterna</b><span><b>10%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">⚔️✨ Pedang Excalibur</b><span><b>5%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Emas')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Emas')">Beli (20 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🏆 **Peti Eksklusif** -->
+<!-- 🏆 Tier Eksklusif (Peti Eksklusif) -->
+<div class="chest-modal" id="EksklusifChestModal">
+    <div class="chest-content Eksklusif-tier">
+        <h2><b>🎁🏆 Peti Eksklusif</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #c78be0;">🚀 Roket</b><span><b>30%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">⚔️✨ Pedang Excalibur</b><span><b>28%</b></span></div>
+        <div class="probability-item"><b style="color: #c78be0;">🏰♾️ Kastil Eterna</b><span><b>28%</b></span></div>
+        <div class="probability-item"><b style="color: #f6ff73;">🌌 Galaksi</b><span><b>7%</b></span></div>
+        <div class="probability-item"><b style="color: #f6ff73;">🕳️✨ Lubang Cacing</b><span><b>7%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Eksklusif')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Eksklusif')">Beli (25 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 💎 Tier Premium -->
+<div class="chest-modal" id="PremiumChestModal">
+    <div class="chest-content Premium-tier">
+        <h2><b>🎁💎 Peti Premium</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #c78be0;">❄️💎 Kristal Es</b><span><b>25%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">🕳️✨ Lubang Cacing</b><span><b>20%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">🌌⚡ Teleporter</b><span><b>20%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">⏳♾️ Chronos Aeternus</b><span><b>15%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">🌌 Galaksi</b><span><b>15%</b></span></div>
+<div class="probability-item"><b style="color: #e74c3c;">🌌⭐ Alam Semesta</b><span><b>5%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Premium')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Premium')">Beli (40 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🔥 **Peti Superior** -->
+<div class="chest-modal" id="SuperiorChestModal">
+    <div class="chest-content Superior-tier">
+        <h2><b>📦🔥 Peti Superior</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #f6ff73;">🕳️✨ Lubang Cacing</b><span><b>35%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">🌌⚡ Teleporter</b><span><b>25%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">⏳♾️ Chronos Aeternus</b><span><b>27%</b></span></div>
+<div class="probability-item"><b style="color: #e74c3c;">🌌⭐ Alam Semesta</b><span><b>10%</b></span></div>
+<div class="probability-item"><b style="color: #e74c3c;">🌌♾️ Zephyria Horizon</b><span><b>3%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Superior')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Superior')">Beli (100 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🌌 **Peti Dimensi** -->
+<div class="chest-modal" id="DimensiChestModal">
+    <div class="chest-content Dimensi-tier">
+        <h2><b>📦🌌 Peti Dimensi</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #f6ff73;">🕳️✨ Lubang Cacing</b><span><b>30%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">🌌⚡ Teleporter</b><span><b>25%</b></span></div>
+<div class="probability-item"><b style="color: #f6ff73;">⏳♾️ Chronos Aeternus</b><span><b>25%</b></span></div>
+<div class="probability-item"><b style="color: #e74c3c;">🌌⭐ Alam Semesta</b><span><b>15%</b></span></div>
+<div class="probability-item"><b style="color: #e74c3c;">🌌♾️ Zephyria Horizon</b><span><b>5%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Dimensi')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Dimensi')">Beli (150 Kunci)</button>
+        </div>
+    </div>
+</div>
+
+<!-- ⚡ **Peti Ultimate** -->
+<div class="chest-modal" id="UltimateChestModal">
+    <div class="chest-content Ultimate-tier">
+        <h2><b>📦⚡ Peti Ultimate</b></h2>
+        <div class="divider"></div>
+        <div class="probability-item"><b style="color: #e74c3c;">🌌⭐ Alam Semesta</b><span><b>70%</b></span></div>
+        <div class="probability-item"><b style="color: #e74c3c;">🌌♾️ Zephyria Horizon</b><span><b>30%</b></span></div>
+        <div class="divider"></div>
+        <div class="modal-actions">
+            <button class="btn-batal" onclick="closeChestModal('Ultimate')">Batal</button>
+            <button class="btn-beli" onclick="buyChest('Ultimate')">Beli (250 Kunci)</button>
+        </div>
+    </div>
+</div>
+<div id="pencapaian" class="tab-content" style="display: none;">
+    <h1 style="text-align: center; color: #fff; margin: 0 0 30px 0; font-size: 2em;">
+        🏆 Pencapaian
+    </h1>
+    <div class="achievement-container" id="achievement-container">
+        <!-- Konten akan diisi oleh JavaScript -->
+    </div>
+</div>
+
+<script>
+function updateAchievements() {
+    const container = document.getElementById("achievement-container");
+    container.innerHTML = "";
+    
+    const achievements = [
+        {
+            id: "element-beginner",
+            title: "Pemula Elemental",
+            desc: "Buat 10 elemen dasar",
+            emoji: "🧪",
+            current: discoveredElements.length,
+            target: 10,
+            reward: "🪙 +50 Koin",
+            check: discoveredElements.length >= 10
+        },
+        {
+            id: "item-collector",
+            title: "Kolektor Barang",
+            desc: "Kumpulkan 5 item koleksi",
+            emoji: "📦",
+            current: koleksi.length,
+            target: 5,
+            reward: "🔑 +3 Kunci",
+            check: koleksi.length >= 5
+        },
+        {
+            id: "chest-opener",
+            title: "Pembuka Peti",
+            desc: "Buka 3 peti misteri",
+            emoji: "🎁",
+            current: chestsOpened,
+            target: 3,
+            reward: "💎 Peti Perak",
+            check: chestsOpened >= 3
+        },
+        {
+            id: "fusion-expert",
+            title: "Ahli Kombinasi",
+            desc: "Buat 25 kombinasi valid",
+            emoji: "⚗️",
+            current: kombinasiUsed,
+            target: 25,
+            reward: "🔑 +10 Kunci",
+            check: kombinasiUsed >= 25
+        }
+    ];
+
+    achievements.forEach(ach => {
+        const progress = Math.min((ach.current / ach.target) * 100, 100);
+        const card = document.createElement("div");
+        card.className = `achievement-card ${ach.check ? 'completed' : ''}`;
+        
+        card.innerHTML = `
+            <div class="achievement-header">
+                <div class="achievement-icon">${ach.emoji}</div>
+                <div class="achievement-content">
+                    <h3 class="achievement-title">${ach.title}</h3>
+                    <p class="achievement-description">${ach.desc}</p>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${progress}%"></div>
+            </div>
+            <div class="achievement-stats">
+                <span>${ach.current}/${ach.target}</span>
+                <span>${progress.toFixed(1)}%</span>
+            </div>
+            <div class="achievement-reward">Hadiah: ${ach.reward}</div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+// Panggil fungsi ini di tempat yang tepat:
+// 1. Setelah kombinasi berhasil (di fungsi combineItems())
+// 2. Setelah membeli item (di fungsi confirmPurchase())
+// 3. Saat pertama kali memuat halaman
+</script>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    updateCoinDisplay();
+    loadAchievements();
+});
+
+function updateCoinDisplay() {
+    let savedCoins = localStorage.getItem("coins") || "0";
+    document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+    document.getElementById("kunci").innerText = `Kunci🔑: ${kunci}`;
+  }  
+
+function claimReward(button) {
+    const achievementName = button.getAttribute("data-achievement");
+    const rewardAmount = parseInt(button.getAttribute("data-reward"));
+    
+    // Tambah koin
+    koin += rewardAmount;
+    localStorage.setItem("koin", koin.toString());
+    document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+    
+    // Tandai sudah diklaim
+    localStorage.setItem("claimed-" + achievementName, "true");
+    button.innerText = "✅ Diklaim";
+    button.disabled = true;
+    
+    // Animasi feedback
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = `+${rewardAmount} Koin 🪙!`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+function showClaimMessage(amount) {
+    let messageBox = document.createElement("div");
+    messageBox.innerText = `Anda mengklaim ${amount} Koin!`;
+    messageBox.style.position = "fixed";
+    messageBox.style.bottom = "20px";
+    messageBox.style.left = "50%";
+    messageBox.style.transform = "translateX(-50%)";
+    messageBox.style.background = "rgba(0, 0, 0, 0.8)";
+    messageBox.style.color = "blcak";
+    messageBox.style.padding = "10px 20px";
+    messageBox.style.borderRadius = "10px";
+    messageBox.style.fontSize = "16px";
+    messageBox.style.zIndex = "1000";
+    document.body.appendChild(messageBox);
+
+    setTimeout(() => {
+        messageBox.remove();
+    }, 3000);
+}
+
+function loadAchievements() {
+    let collectedCount = JSON.parse(localStorage.getItem("elements"))?.length || 0;
+    console.log("Elemen yang dikumpulkan:", collectedCount);
+
+    const achievements = [
+    { 
+        name: "Kumpulkan Total 10 Elemen ", 
+        goal: 10, 
+        reward: 50,
+        emoji: "🧪" 
+    },
+    { 
+        name: "Kumpulkan Total 20 Elemen ", 
+        goal: 20, 
+        reward: 100,
+        emoji: "⚗️" 
+    },
+    { 
+        name: "Kumpulkan Total 50 Elemen", 
+        goal: 50, 
+        reward: 250,
+        emoji: "🔭" 
+    },
+    { 
+        name: "Kumpulkan Total 100 Elemen", 
+        goal: 100, 
+        reward: 600,
+        emoji: "🌌" 
+    },
+    { 
+        name: "Kumpulkan Total 200 Elemen", 
+        goal: 200, 
+        reward: 1500,
+        emoji: "🚀" 
+    },
+    {
+        name: "Kumpulkan Total 300 Elemen",
+        goal: 300,
+        reward: 2000
+    },
+    {
+        name: "Kumpulkan Total 400 Elemen",
+        goal: 400,
+        reward: 2500
+    },
+    {
+        name: "Kumpulkan Total 500 Elemen",
+        goal: 500,
+        reward: 3000
+    },
+    {
+        name: "Kumpulkan Total 650 Elemen",
+        goal: 650,
+        reward: 4500
+    },
+    {
+        name: "Kumpulkan Total 800 Elemen",
+        goal: 800,
+        reward: 6000
+    },
+    {
+        name: "Kumpulkan Total 1000 Elemen",
+        goal: 1000,
+        reward: 10000
+    }
+];
+
+    const container = document.getElementById("achievement-container");
+    container.innerHTML = "";
+
+    achievements.forEach(ach => {
+        let completed = collectedCount >= ach.goal;
+        let claimed = localStorage.getItem("claimed-" + ach.name) === "true";
+
+        const card = document.createElement("div");
+        card.classList.add("achievement-card");
+        if (completed) card.classList.add("completed");
+
+        card.innerHTML = `
+            <div class="achievement-header">
+                <div class="achievement-icon">🏆</div>
+                <div class="achievement-content">
+                    <h3 class="achievement-title">${ach.name}</h3>
+                    <p class="achievement-description">${Math.min(collectedCount, ach.goal)}/${ach.goal}</p>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: ${(Math.min(collectedCount, ach.goal) / ach.goal) * 100}%"></div>
+            </div>
+            <div class="reward-section">
+                <div class="reward-info">🪙 ${ach.reward} Koin</div>
+                <button class="claim-button" data-achievement="${ach.name}" data-reward="${ach.reward}" ${completed && !claimed ? "" : "disabled"} 
+                    onclick="claimReward(this)">
+                    ${claimed ? "✅ Diklaim" : completed ? "Klaim Hadiah" : "Belum Selesai"}
+                </button>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+function claimAchievement(achievementName, reward, button) {
+    // Tambah koin
+    koin += reward;
+    localStorage.setItem("koin", koin.toString());
+    document.getElementById("koin").innerText = `Koin🪙: ${koin}`;
+    
+    // Tandai sudah diklaim
+    localStorage.setItem("claimed-" + achievementName, "true");
+    
+    // Update tampilan
+    button.disabled = true;
+    button.innerText = "✅ Diklaim";
+    button.parentElement.parentElement.classList.add("claimed");
+}
+</script>
+<script>
+    // Fungsi baru untuk update koleksi saja
+function updateKoleksi() {
+    const koleksi = JSON.parse(localStorage.getItem("koleksi")) || [];
+    const koleksiDiv = document.getElementById("koleksi-items");
+    
+    // Hapus konten lama
+    koleksiDiv.innerHTML = "";
+
+    // Kategori koleksi
+    const categories = {
+        Biasa : [
+    {nama: "Emas", emoji: "🪙", sources: "Toko - Barang Biasa (20 Koin)", desc: "Mata uang dasar yang digunakan untuk transaksi di dunia Infinicraft."},  
+{nama: "Piala", emoji: "🏆", sources: "Toko - Barang Biasa (50 Koin)", desc: "Trofi kemenangan yang menunjukkan pencapaian tertinggi."},  
+{nama: "Lampu", emoji: "💡", sources: "Toko - Barang Biasa (20 Koin)", desc: "Sumber cahaya yang menerangi dunia kegelapan."},  
+{nama: "Berlian", emoji: "💎", sources: "Toko - Barang Biasa (100 Koin)", desc: "Batu mulia yang sangat berharga dan langka."},  
+{nama: "Bintang", emoji: "⭐", sources: "Toko - Barang Biasa (40 Koin)", desc: "Simbol keberuntungan dan harapan di langit malam."},  
+{nama: "Jam Pasir", emoji: "⏳", sources: "Toko - Barang Biasa (40 Koin)", desc: "Pengukur waktu kuno yang melambangkan kesabaran."},  
+{nama: "Jam", emoji: "⌚", sources: "Toko - Barang Biasa (50 Koin)", desc: "Alat untuk mengukur dan mengatur waktu."},  
+{nama: "Buku", emoji: "📖", sources: "Toko - Barang Biasa (30 Koin)", desc: "Kumpulan pengetahuan yang dapat mengubah dunia."},  
+{nama: "Payung", emoji: "☂️", sources: "Toko - Barang Biasa (20 Koin)", desc: "Pelindung dari hujan dan terik matahari."},  
+{nama: "Kamera", emoji: "📷", sources: "Toko - Barang Biasa (50 Koin)", desc: "Alat untuk menangkap momen berharga dalam hidup."},  
+{nama: "Sepatu", emoji: "👟", sources: "Toko - Barang Biasa (40 Koin)", desc: "Alas kaki yang nyaman untuk berpetualang."},  
+{nama: "Kacamata", emoji: "🕶️", sources: "Toko - Barang Biasa (20 Koin)", desc: "Pelindung mata yang memberikan tampilan keren."}
+],
+
+Langka : [
+    { nama: "Cincin Berlian", emoji: "💍" },
+    { nama: "Medali Emas", emoji: "🥇" },
+    { nama: "Robot", emoji: "🤖" },
+    { nama: "Ametis", emoji: "💎🔮" },
+    { nama: "Buku Rahasia", emoji: "📖✨" },
+    { nama: "Mahkota Emas", emoji: "👑🌟" },
+    { nama: "Planet", emoji: "🪐" },
+    { nama: "Alien", emoji: "👽" },
+    { nama: "Kristal Es", emoji: "❄️💎" },
+    { nama: "Batu Meteor", emoji: "🪨☄️" }
+],
+
+Epik : [
+    { nama: "Pesawat", emoji: "✈️" },
+    { nama: "Komet", emoji: "💫" },
+    { nama: "Roket", emoji: "🚀" },
+    { nama: "UFO", emoji: "🛸" },
+    { nama: "Robot Super", emoji: "🤖⚡" },
+    { nama: "Kastil Eterna", emoji: "🏰♾️" },
+    { nama: "Pedang Excalibur", emoji: "⚔️✨" }
+],
+
+Legendaris : [
+    { nama: "Lubang Cacing", emoji: "🕳️✨" },
+    { nama: "Teleporter", emoji: "🌌⚡" },
+    { nama: "Chronos Aeternus", emoji: "⏳♾️" },
+    { nama: "Galaksi", emoji: "🌌" }
+],
+
+Mitos : [
+    { nama: "Alam Semesta", emoji: "🌌⭐" },
+    { nama: "Zephyria Horizon", emoji: "🌌♾️" }
+],
+    };
+
+    // Render setiap kategori
+    Object.entries(categories).forEach(([type, items]) => {
+        const categoryDiv = document.createElement("div");
+        categoryDiv.innerHTML = `<h2>${getCategoryTitle(type)}</h2>`;
+        
+        const grid = document.createElement("div");
+        grid.className = `${type}-grid`;
+        
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "item";
+            
+            const owned = koleksi.some(i => i.name === item.nama);
+            itemDiv.innerHTML = owned ? 
+                `<span style="font-size: 2em">${item.emoji}</span>` :
+                `<span class="unknown">?</span>`;
+            
+            grid.appendChild(itemDiv);
+        });
+        
+        categoryDiv.appendChild(grid);
+        koleksiDiv.appendChild(categoryDiv);
+    });
+}
+
+function getCategoryTitle(type) {
+    const titles = {
+        Biasa: "Barang Biasa",
+        Langka: "Barang Langka",
+        Epik: "Barang Epik",
+        Legendaris: "Barang Legendaris",
+        Mitos: "Barang Mitos"
+    };
+    return titles[type];
+}
+</script>
+<script>
+    const koleksiItems = [
+    {
+        name: "Koin",
+        emoji: "🪙",
+        sources: "Toko - Barang Biasa (20 Koin)",
+        desc: "Mata uang dasar yang digunakan untuk transaksi di dunia Infinicraft",
+        owned: false
+    },
+    {
+        name: "UFO",
+        emoji: "🛸",
+        sources: "Peti Misteri Emas (30%), Peti Premium (15%)",
+        desc: "Kendaraan luar angkasa misterius dari peradaban alien maju",
+        owned: true
+    }
+];
+    // Ganti alert biasa dengan fungsi toast modern
+function showToast(message, color = "#27ae60") {
+    const toast = document.createElement("div");
+    toast.style = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${color};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: slideUp 0.5s ease-out;
+    `;
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.remove(), 3000);
+}
+function showCollectionInfo(event) {
+    const item = event.target.closest('.item');
+    const modal = document.getElementById('collectionModal');
+    
+    // Ambil data dari atribut dataset
+    const itemData = {
+        name: item.dataset.name,
+        emoji: item.dataset.emoji,
+        owned: item.dataset.owned === 'true',
+        sources: item.dataset.sources,
+        desc: item.dataset.desc
+    };
+
+    // Update konten modal
+    document.getElementById('modalItemName').textContent = itemData.name;
+    document.getElementById('modalEmoji').textContent = itemData.emoji;
+    
+    // Status kepemilikan
+    const statusElement = document.getElementById('modalItemStatus');
+    statusElement.className = `item-status ${itemData.owned ? 'owned' : 'unowned'}`;
+    statusElement.textContent = itemData.owned ? 'Sudah Dimiliki' : 'Belum Dimiliki';
+    
+    // Deskripsi
+    document.getElementById('modalItemDesc').textContent = itemData.owned ? 
+        itemData.desc : "??? (Kumpulkan item ini untuk membuka deskripsi)";
+    
+    // Sumber
+    document.getElementById('modalItemSource').textContent = itemData.sources;
+
+    modal.style.display = 'flex';
+}
+
+function closeCollectionModal() {
+    document.getElementById('collectionModal').style.display = 'none';
+}
+
+</script>
+<script>
+    // Di dalam fungsi updateKoleksi()
+function updateKoleksi() {
+    const koleksi = JSON.parse(localStorage.getItem("koleksi")) || [];
+    const koleksiDiv = document.getElementById("koleksi-items");
+    koleksiDiv.innerHTML = "";
+
+    const categories = 
+{
+  "Biasa": [
+    {"nama": "Emas", "emoji": "🪙", "sources": "Toko - Barang Biasa (20 Koin)", "desc": "Mata uang dasar yang digunakan untuk transaksi di dunia Infinicraft."},
+    {"nama": "Piala", "emoji": "🏆", "sources": "Toko - Barang Biasa (50 Koin)", "desc": "Trofi kemenangan yang menunjukkan pencapaian tertinggi."},
+    {"nama": "Lampu", "emoji": "💡", "sources": "Toko - Barang Biasa (20 Koin)", "desc": "Sumber cahaya yang menerangi dunia kegelapan."},
+    {"nama": "Berlian", "emoji": "💎", "sources": "Toko - Barang Biasa (100 Koin)", "desc": "Batu mulia yang sangat berharga dan langka."},
+    {"nama": "Bintang", "emoji": "⭐", "sources": "Toko - Barang Biasa (40 Koin)", "desc": "Simbol keberuntungan dan harapan di langit malam."},
+    {"nama": "Jam Pasir", "emoji": "⏳", "sources": "Toko - Barang Biasa (40 Koin)", "desc": "Pengukur waktu kuno yang melambangkan kesabaran."},
+    {"nama": "Jam", "emoji": "⌚", "sources": "Toko - Barang Biasa (50 Koin)", "desc": "Alat untuk mengukur dan mengatur waktu."},
+    {"nama": "Buku", "emoji": "📖", "sources": "Toko - Barang Biasa (30 Koin)", "desc": "Kumpulan pengetahuan yang dapat mengubah dunia."},
+    {"nama": "Payung", "emoji": "☂️", "sources": "Toko - Barang Biasa (20 Koin)", "desc": "Pelindung dari hujan dan terik matahari."},
+    {"nama": "Kamera", "emoji": "📷", "sources": "Toko - Barang Biasa (50 Koin)", "desc": "Alat untuk menangkap momen berharga dalam hidup."},
+    {"nama": "Sepatu", "emoji": "👟", "sources": "Toko - Barang Biasa (40 Koin)", "desc": "Alas kaki yang nyaman untuk berpetualang."},
+    {"nama": "Kacamata", "emoji": "🕶️", "sources": "Toko - Barang Biasa (20 Koin)", "desc": "Pelindung mata yang memberikan tampilan keren."}
+  ],
+  "Langka": [
+    {"nama": "Cincin Berlian", "emoji": "💍", "sources": "Peti Perunggu (20%)", "desc": "Cincin berhiaskan berlian yang melambangkan keabadian."},
+    {"nama": "Medali Emas", "emoji": "🥇", "sources": "Peti Perunggu (20%)", "desc": "Penghargaan tertinggi bagi mereka yang berprestasi."},
+    {"nama": "Robot", "emoji": "🤖", "sources": "Peti Perunggu (20%)", "desc": "Mesin cerdas yang dapat membantu berbagai tugas."},
+    {"nama": "Ametis", "emoji": "💎🔮", "sources": "Peti Perunggu (15%)", "desc": "Kristal ungu yang dipercaya memiliki kekuatan magis."},
+    {"nama": "Buku Rahasia", "emoji": "📖✨", "sources": "Peti Perunggu (15%)", "desc": "Kitab kuno berisi pengetahuan yang hilang."},
+    {"nama": "Mahkota Emas", "emoji": "👑🌟", "sources": "Peti Perunggu (10%)", "desc": "Mahkota yang hanya dikenakan oleh penguasa sejati."},
+    {"nama": "Planet", "emoji": "🪐", "sources": "Peti Perak (30%)", "desc": "Bola raksasa yang mengitari bintang di angkasa."},
+    {"nama": "Alien", "emoji": "👽", "sources": "Peti Perak (25%)", "desc": "Makhluk asing yang datang dari luar bumi."},
+    {"nama": "Kristal Es", "emoji": "❄️💎", "sources": "Peti Perak (20%), Peti Premium (25%)", "desc": "Kristal beku yang tak pernah mencair."},
+    {"nama": "Batu Meteor", "emoji": "🪨☄️", "sources": "Peti Perak (15%)", "desc": "Batu angkasa yang jatuh ke bumi dengan kekuatan besar."}
+  ],
+  "Epik": [
+    {"nama": "Pesawat", "emoji": "✈️", "sources": "Peti Perak (7%)", "desc": "Kendaraan udara yang memungkinkan perjalanan jarak jauh dengan cepat."},
+    {"nama": "Komet", "emoji": "💫", "sources": "Peti Perak (3%)", "desc": "Bola es dan debu luar angkasa yang melesat cepat di langit."},
+    {"nama": "Roket", "emoji": "🚀", "sources": "Peti Emas (35%), Peti Eksklusif (30%)", "desc": "Kendaraan luar angkasa yang dapat membawa manusia ke luar orbit."},
+    {"nama": "UFO", "emoji": "🛸", "sources": "Peti Emas (30%)", "desc": "Kendaraan misterius yang dikendalikan oleh makhluk asing."},
+    {"nama": "Robot Super", "emoji": "🤖⚡", "sources": "Peti Emas (20%)", "desc": "Mesin berkekuatan tinggi yang mampu melakukan tugas berat."},
+    {"nama": "Kastil Eterna", "emoji": "🏰♾️", "sources": "Peti Emas (10%), Peti Eksklusif (28%)", "desc": "Benteng mistis yang konon berdiri di luar dimensi waktu."},
+    {"nama": "Pedang Excalibur", "emoji": "⚔️✨", "sources": "Peti Emas (5%), Peti Eksklusif (28%)", "desc": "Pedang legendaris yang hanya bisa diangkat oleh pemilik sejati."}
+  ],
+  "Legendaris": [
+    {"nama": "Lubang Cacing", "emoji": "🕳️✨", "sources": "Peti Eksklusif (7%), Peti Premium (20%), Peti Superior (35%), Peti Dimensi (30%)", "desc": "Terowongan ruang-waktu yang menghubungkan dua titik jauh di alam semesta."},
+    {"nama": "Teleporter", "emoji": "🌌⚡", "sources": "Peti Premium (20%), Peti Superior (25%), Peti Dimensi (25%)", "desc": "Perangkat yang dapat memindahkan objek dalam sekejap mata."},
+    {"nama": "Chronos Aeternus", "emoji": "⏳♾️", "sources": "Peti Premium (15%), Peti Superior (27%), Peti Dimensi (25%)", "desc": "Artefak kuno yang dapat memperlambat atau mempercepat waktu."},
+    {"nama": "Galaksi", "emoji": "🌌", "sources": "Peti Eksklusif (7%), Peti Premium (15%)", "desc": "Kumpulan bintang, planet, dan debu kosmik yang membentuk alam semesta."}
+  ],
+  "Mitos": [
+    {"nama": "Alam Semesta", "emoji": "🌌⭐", "sources": "Peti Premium (5%), Peti Superior (10%), Peti Dimensi (15%), Peti Ultimate (70%)", "desc": "Kehampaan luas yang mencakup segalanya, termasuk waktu dan ruang."},
+    {"nama": "Zephyria Horizon", "emoji": "🌌♾️", "sources": "Peti Superior (3%), Peti Dimensi (5%), Peti Ultimate (30%)", "desc": "Batas tak terlihat di mana dimensi bertemu dan waktu menjadi tidak relevan."}
+  ]
+};
+
+    // Render setiap kategori
+    Object.entries(categories).forEach(([type, items]) => {
+        const categoryDiv = document.createElement("div");
+        categoryDiv.className = "koleksi-category";
+        categoryDiv.innerHTML = `<h2>${getCategoryTitle(type)}</h2>`;
+        
+        const grid = document.createElement("div");
+        grid.className = `${type}-grid`;
+
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "item";
+            
+            // Tambahkan data atribut
+            itemDiv.dataset.nama = item.nama;
+            itemDiv.dataset.emoji = item.emoji;
+            itemDiv.dataset.sources = item.sources;
+            itemDiv.dataset.desc = item.desc;
+            itemDiv.dataset.owned = koleksi.some(i => i.name === item.nama);
+
+            // Tampilan item
+            const owned = koleksi.some(i => i.name === item.nama);
+            itemDiv.innerHTML = owned ? 
+                `<span style="font-size: 2em">${item.emoji}</span>` :
+                `<span class="unknown">?</span>`;
+
+            // Event listener
+            itemDiv.addEventListener("click", function() {
+                const itemData = {
+                    nama: this.dataset.nama,
+                    emoji: this.dataset.emoji,
+                    sources: this.dataset.sources,
+                    desc: this.dataset.desc,
+                    owned: this.dataset.owned === 'true'
+                };
+                showCollectionInfo(itemData);
+            });
+
+            grid.appendChild(itemDiv);
+        });
+        
+        categoryDiv.appendChild(grid);
+        koleksiDiv.appendChild(categoryDiv);
+    });
+}
+
+// Fungsi pembantu untuk judul kategori
+function getCategoryTitle(type) {
+    const titles = {
+        Biasa: "🛍️ Barang Biasa",
+        Langka: "🔍 Barang Langka",
+        Epik: "✨ Barang Epik",
+        Legendaris: "🌟 Barang Legendaris",
+        Mitos: "🌌 Barang Mitos"
+    };
+    return titles[type] || type;
+}
+
+// Fungsi untuk menampilkan modal informasi
+function showCollectionInfo(itemData) {
+    const modal = document.getElementById("collectionModal");
+    
+    // Update konten modal
+    document.getElementById("modalItemName").textContent = itemData.nama;
+    document.getElementById("modalEmoji").textContent = itemData.emoji;
+    
+    // Status kepemilikan
+    const statusElement = document.getElementById("modalItemStatus");
+    statusElement.className = `item-status ${itemData.owned ? 'owned' : 'unowned'}`;
+    statusElement.textContent = itemData.owned ? 'Sudah Dimiliki' : 'Belum Dimiliki';
+    
+    // Deskripsi
+    document.getElementById("modalItemDesc").textContent = 
+        itemData.owned ? itemData.desc : "??? (Kumpulkan item ini untuk membuka deskripsi)";
+    
+    // Sumber
+    document.getElementById("modalItemSource").textContent = `📦 Sumber: ${itemData.sources}`;
+
+    modal.style.display = "flex";
+}
+
+// Fungsi untuk menutup modal
+function closeCollectionModal() {
+    document.getElementById("collectionModal").style.display = "none";
+}
+// Fungsi untuk menampilkan modal
+function showGachaModal(emoji, name) {
+    const modal = document.getElementById('gachaModal');
+    document.getElementById('gachaEmoji').textContent = emoji;
+    document.getElementById('gachaText').textContent = `${name}`;
+    modal.style.display = 'block';
+}
+
+// Fungsi untuk menutup modal
+function closeGachaModal() {
+    document.getElementById('gachaModal').style.display = 'none';
+}
+
+// Modifikasi fungsi buyChest
+function buyChest(tier) {
+    const chest = chestData[tier];
+    if(kunci >= chest.price) {
+        kunci -= chest.price;
+        const random = Math.random() * 100;
+        let cumulative = 0;
+        
+        for(const reward of chest.rewards) {
+            cumulative += reward.prob;
+            if(random <= cumulative) {
+                koleksi.push(reward.item);
+                localStorage.setItem('koleksi', JSON.stringify(koleksi));
+                
+                // Ganti alert dengan showGachaModal
+                showGachaModal(reward.item.emoji, reward.item.name);
+                
+                break;
+            }
+        }
+        
+        localStorage.setItem('kunci', kunci.toString());
+        document.getElementById('kunci').innerText = `Kunci🔑: ${kunci}`;
+        updateTokoItems();
+        closeChestModal(tier);
+    } else {
+        alert(`❌ Kunci tidak cukup! Butuh ${chest.price} kunci`);
+    }
+}
+</script>
+<div class="gacha-modal" id="gachaModal">
+    <div class="gacha-modal-content">
+        <div class="gacha-modal-emoji" id="gachaEmoji"></div>
+        <div class="gacha-modal-text" id="gachaText"></div>
+        <button class="gacha-modal-button" onclick="closeGachaModal()">Baik</button>
+    </div>
+</div>
+</body>
+</html>
